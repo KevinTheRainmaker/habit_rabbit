@@ -11,6 +11,7 @@ const _defaultItems = [
 
 class InMemoryShopRepository implements ShopRepository {
   final Set<String> _ownedIds = {};
+  final Set<String> _equippedIds = {};
 
   @override
   Future<List<ShopItem>> getItems() async {
@@ -43,5 +44,26 @@ class InMemoryShopRepository implements ShopRepository {
       throw Exception('당근이 부족해요!');
     }
     _ownedIds.add(itemId);
+  }
+
+  @override
+  Future<List<ShopItem>> getEquippedItems() async {
+    return _defaultItems
+        .where((item) => _equippedIds.contains(item.id))
+        .map((item) => item.copyWith(isOwned: true))
+        .toList();
+  }
+
+  @override
+  Future<void> equipItem({required String itemId}) async {
+    if (!_ownedIds.contains(itemId)) {
+      throw Exception('보유하지 않은 아이템입니다.');
+    }
+    _equippedIds.add(itemId);
+  }
+
+  @override
+  Future<void> unequipItem({required String itemId}) async {
+    _equippedIds.remove(itemId);
   }
 }
