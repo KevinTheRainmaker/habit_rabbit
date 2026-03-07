@@ -28,7 +28,7 @@ git commit -m "feat: add ShopItem entity"
 
 ---
 
-## Task 79: ShopRepository 인터페이스 + InMemory 구현 (TDD)
+## Task 79: ShopRepository 인터페이스 + InMemory 구현 (TDD) ✅
 
 **Files:**
 
