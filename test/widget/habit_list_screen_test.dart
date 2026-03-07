@@ -91,8 +91,9 @@ void main() {
     testWidgets('FAB 존재', (tester) async {
       final mockHabit = MockHabitRepository();
       final mockAuth = MockAuthRepository();
-      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(null));
-      when(() => mockHabit.getHabits(userId: any(named: 'userId')))
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
           .thenAnswer((_) async => []);
 
       await tester.pumpWidget(
@@ -104,6 +105,7 @@ void main() {
           child: const MaterialApp(home: HabitListScreen()),
         ),
       );
+      await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });

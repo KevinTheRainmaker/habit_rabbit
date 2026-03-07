@@ -5,6 +5,7 @@ import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkin_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
+import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -34,7 +35,7 @@ class HabitListScreen extends ConsumerWidget {
           if (user == null) {
             return const Center(child: Text('습관을 추가해보세요!'));
           }
-          final habitsAsync = ref.watch(habitListProvider(user.id));
+          final habitsAsync = ref.watch(habitListNotifierProvider(user.id));
           return habitsAsync.when(
             data: (habits) {
               if (habits.isEmpty) {
@@ -54,9 +55,33 @@ class HabitListScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Center(child: Text('오류가 발생했습니다')),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+      floatingActionButton: userAsync.whenOrNull(
+        data: (user) => user == null
+            ? null
+            : FloatingActionButton(
+                onPressed: () => _showAddHabitDialog(context, ref, user.id),
+                child: const Icon(Icons.add),
+              ),
+      ),
+    );
+  }
+
+  void _showAddHabitDialog(BuildContext context, WidgetRef ref, String userId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: AddHabitDialog(
+          onSaved: (name) {
+            ref
+                .read(habitListNotifierProvider(userId).notifier)
+                .addHabit(name: name, userId: userId);
+            Navigator.of(context).pop();
+          },
+        ),
       ),
     );
   }
