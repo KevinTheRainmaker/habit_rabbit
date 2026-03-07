@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter doctor:*)",
+      "Bash(flutter pub:*)",
+      "Bash(mkdir:*)",
+      "Bash(flutter test:*)",
+      "Bash(git:*)"
+    ]
+  }
+}

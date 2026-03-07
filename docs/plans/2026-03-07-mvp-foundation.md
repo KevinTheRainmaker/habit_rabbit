@@ -14,15 +14,15 @@
 
 ## 사전 요구사항 (코드 작성 전 1회 수행)
 
-- [ ] Flutter SDK 설치 확인: `flutter doctor`
-- [ ] Firebase 프로젝트 생성 (Firebase Console)
-- [ ] `flutterfire configure` 실행 → `google-services.json`, `GoogleService-Info.plist` 생성
-- [ ] RevenueCat 계정 생성 + iOS/Android App 등록 + API Key 확보
-- [ ] Apple Developer: Sign in with Apple capability 활성화
+- [x] Flutter SDK 설치 확인: Flutter 3.29.2 (stable) ✅
+- [ ] Firebase 프로젝트 생성 (Firebase Console) — 수동 작업 필요
+- [ ] `flutterfire configure` 실행 → `google-services.json`, `GoogleService-Info.plist` 생성 — 수동 작업 필요
+- [ ] RevenueCat 계정 생성 + iOS/Android App 등록 + API Key 확보 — 수동 작업 필요
+- [ ] Apple Developer: Sign in with Apple capability 활성화 — 수동 작업 필요
 
 ---
 
-## Task 0: Flutter 프로젝트 초기화
+## Task 0: Flutter 프로젝트 초기화 ✅
 
 **Files:**
 
@@ -104,7 +104,7 @@ git commit -m "chore: initialize Flutter project with dependencies"
 
 ---
 
-## Task 1: 프로젝트 디렉토리 구조
+## Task 1: 프로젝트 디렉토리 구조 ✅
 
 **Files:**
 
