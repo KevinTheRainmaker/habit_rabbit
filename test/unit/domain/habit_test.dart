@@ -33,5 +33,30 @@ void main() {
 
       expect(habit.isActive, isFalse);
     });
+
+    test('targetDays 기본값은 매일 (0~6)', () {
+      final habit = Habit(
+        id: 'habit-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+
+      expect(habit.targetDays, equals([0, 1, 2, 3, 4, 5, 6]));
+    });
+
+    test('특정 요일만 설정 가능 (월,수,금 = 0,2,4)', () {
+      final habit = Habit(
+        id: 'habit-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+        targetDays: [0, 2, 4],
+      );
+
+      expect(habit.targetDays, equals([0, 2, 4]));
+    });
   });
 }
