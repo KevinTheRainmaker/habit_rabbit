@@ -9,7 +9,8 @@
 
 작업 시작 전 반드시 읽을 것:
 
-- `docs/plans/2026-03-07-mvp-foundation.md` — 현재 구현 계획 (Task 0~7)
+- `docs/plans/2026-03-07-mvp-foundation.md` — 도메인 레이어 계획 (Task 0~7) ✅ 완료
+- `docs/plans/2026-03-07-mvp-data-layer.md` — 데이터 레이어 계획 (Task 8~13) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -20,13 +21,13 @@
 
 ```bash
 git log --oneline -10
-flutter test 2>&1 | tail -20
+flutter test test/unit/ 2>&1 | tail -5
 ```
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-07-mvp-foundation.md`에서 `- [ ]`로 표시된 **첫 번째** 항목을 찾아라.
-모든 계획 파일이 `- [x]`로 완료되었으면 → 아래 "완료 조건" 참조.
+`docs/plans/2026-03-07-mvp-data-layer.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
 
@@ -85,8 +86,8 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-07-mvp-foundation.md`의 모든 태스크가 `- [x]`이면:
+`docs/plans/2026-03-07-mvp-data-layer.md`의 Task 8~13이 모두 완료되면:
 
-1. `flutter test` 전체 통과 확인
+1. `flutter test test/unit/` 전체 통과 확인
 2. `git log --oneline -15` 출력
 3. `<promise>ALL TASKS COMPLETE</promise>` 출력
