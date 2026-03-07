@@ -127,7 +127,7 @@ git commit -m "feat: navigate to ShopScreen from carrot points"
 
 ---
 
-## Task 83: 전체 테스트 통과 확인
+## Task 83: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
