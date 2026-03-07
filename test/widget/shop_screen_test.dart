@@ -7,6 +7,7 @@ import 'package:habit_rabbit/domain/repositories/shop_repository.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
+import 'package:habit_rabbit/presentation/screens/customization_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
 
 class MockShopRepository extends Mock implements ShopRepository {}
@@ -79,6 +80,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('당근이 부족'), findsOneWidget);
+    });
+
+    testWidgets('"꾸미기" 버튼 탭 시 CustomizationScreen으로 이동', (tester) async {
+      final mockRepo = MockShopRepository();
+      when(() => mockRepo.getItems()).thenAnswer((_) async => testItems);
+      when(() => mockRepo.getOwnedItems()).thenAnswer((_) async => []);
+      when(() => mockRepo.getEquippedItems()).thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [shopRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: ShopScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.palette));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CustomizationScreen), findsOneWidget);
     });
   });
 }

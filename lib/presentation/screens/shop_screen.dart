@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
+import 'package:habit_rabbit/presentation/screens/customization_screen.dart';
 
 class ShopScreen extends ConsumerWidget {
   const ShopScreen({super.key});
@@ -16,12 +17,18 @@ class ShopScreen extends ConsumerWidget {
         title: const Text('아이템 샵'),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Center(
               child: Text(
                 '🥕 $points',
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.palette),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CustomizationScreen()),
             ),
           ),
         ],

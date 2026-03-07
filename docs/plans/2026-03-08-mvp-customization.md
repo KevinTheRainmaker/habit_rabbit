@@ -57,7 +57,7 @@ git commit -m "feat: add CustomizationScreen"
 
 ---
 
-## Task 86: ShopScreen → CustomizationScreen 연결 (TDD)
+## Task 86: ShopScreen → CustomizationScreen 연결 (TDD) ✅
 
 **Files:**
 
