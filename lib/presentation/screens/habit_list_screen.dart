@@ -100,6 +100,7 @@ class _HabitTile extends ConsumerStatefulWidget {
 class _HabitTileState extends ConsumerState<_HabitTile> {
   bool _checkedIn = false;
   int _earnedPoints = 0;
+  int _streak = 0;
 
   Future<void> _onTap() async {
     if (_checkedIn) return;
@@ -115,6 +116,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
       setState(() {
         _checkedIn = true;
         _earnedPoints = checkin.carrotPoints;
+        _streak = checkin.streakDay + 1;
       });
     } catch (_) {
       // 이미 체크인한 경우 무시
@@ -137,7 +139,9 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
           .deleteHabit(habitId: widget.habit.id, userId: widget.userId),
       child: ListTile(
         title: Text(widget.habit.name),
-        subtitle: _checkedIn ? Text('🥕 +$_earnedPoints 획득!') : null,
+        subtitle: _checkedIn
+            ? Text('🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속')
+            : null,
         trailing: Icon(
           _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
           color: _checkedIn ? Colors.orange : null,
