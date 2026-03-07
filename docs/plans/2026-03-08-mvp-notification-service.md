@@ -64,7 +64,7 @@ git commit -m "feat: add notificationServiceProvider"
 
 ---
 
-## Task 75: NotificationSettingsScreen 위젯 (TDD)
+## Task 75: NotificationSettingsScreen 위젯 (TDD) ✅
 
 알림 시간 및 활성화 여부 설정 화면.
 
