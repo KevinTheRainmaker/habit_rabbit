@@ -37,7 +37,7 @@ git commit -m "feat: add OnboardingScreen"
 
 ---
 
-## Task 69: HabitRecommendationScreen 위젯 (TDD)
+## Task 69: HabitRecommendationScreen 위젯 (TDD) ✅
 
 온보딩 결과 기반 습관 추천 화면.
 
