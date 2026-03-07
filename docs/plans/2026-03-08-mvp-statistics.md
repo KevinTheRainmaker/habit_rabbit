@@ -35,7 +35,7 @@ git commit -m "feat: add HabitDetailScreen"
 
 ---
 
-## Task 64: HabitListScreen → HabitDetailScreen 네비게이션 (TDD)
+## Task 64: HabitListScreen → HabitDetailScreen 네비게이션 (TDD) ✅
 
 습관 타일 탭(체크인 아님) → 상세 화면 이동. 현재 탭은 체크인이므로 아이콘 버튼으로 분리.
 

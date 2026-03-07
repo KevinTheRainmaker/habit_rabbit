@@ -12,6 +12,7 @@ import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
+import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
@@ -60,7 +61,7 @@ class HabitListScreen extends ConsumerWidget {
                     child: ListView.builder(
                       itemCount: habits.length,
                       itemBuilder: (context, index) {
-                        return _HabitTile(habit: habits[index], userId: user.id);
+                        return _HabitTile(habit: habits[index], user: user);
                       },
                     ),
                   ),
@@ -123,9 +124,11 @@ class HabitListScreen extends ConsumerWidget {
 
 class _HabitTile extends ConsumerStatefulWidget {
   final Habit habit;
-  final String userId;
+  final User user;
 
-  const _HabitTile({required this.habit, required this.userId});
+  String get userId => user.id;
+
+  const _HabitTile({required this.habit, required this.user});
 
   @override
   ConsumerState<_HabitTile> createState() => _HabitTileState();
@@ -176,9 +179,27 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         subtitle: _checkedIn
             ? Text('🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속')
             : null,
-        trailing: Icon(
-          _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
-          color: _checkedIn ? Colors.orange : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
+              color: _checkedIn ? Colors.orange : null,
+            ),
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => HabitDetailScreen(
+                      habit: widget.habit,
+                      user: widget.user,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         onTap: _onTap,
         onLongPress: _onLongPress,
