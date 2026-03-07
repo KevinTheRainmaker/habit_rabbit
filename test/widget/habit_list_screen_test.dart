@@ -10,6 +10,7 @@ import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
+import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
@@ -143,6 +144,41 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('매일 운동'), findsNothing);
+    });
+
+    testWidgets('무료 사용자 3개 초과 시 PremiumGateScreen 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      // 무료 사용자, 이미 3개 습관
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final habits = List.generate(3, (i) => Habit(
+        id: 'h-$i', userId: 'uid-1', name: '습관 $i',
+        createdAt: DateTime(2026, 3, 7), isActive: true,
+      ));
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => habits);
+      for (final h in habits) {
+        when(() => mockHabit.getCheckins(habitId: h.id, userId: 'uid-1'))
+            .thenAnswer((_) async => []);
+      }
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // FAB 탭
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PremiumGateScreen), findsOneWidget);
     });
 
     testWidgets('HabitListScreen에 CompletionRateCard 표시', (tester) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
+import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
@@ -10,6 +11,7 @@ import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
+import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class HabitListScreen extends ConsumerWidget {
@@ -71,14 +73,29 @@ class HabitListScreen extends ConsumerWidget {
         data: (user) => user == null
             ? null
             : FloatingActionButton(
-                onPressed: () => _showAddHabitDialog(context, ref, user.id),
+                onPressed: () => _showAddHabitDialog(context, ref, user!),
                 child: const Icon(Icons.add),
               ),
       ),
     );
   }
 
-  void _showAddHabitDialog(BuildContext context, WidgetRef ref, String userId) {
+  void _showAddHabitDialog(BuildContext context, WidgetRef ref, User user) {
+    final userId = user.id;
+    final isPremium = user.isPremium;
+
+    if (!isPremium) {
+      final habits = ref.read(habitListNotifierProvider(userId)).valueOrNull ?? [];
+      if (habits.length >= 3) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => const PremiumGateScreen(),
+        );
+        return;
+      }
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
