@@ -123,14 +123,27 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(widget.habit.name),
-      subtitle: _checkedIn ? Text('🥕 +$_earnedPoints 획득!') : null,
-      trailing: Icon(
-        _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
-        color: _checkedIn ? Colors.orange : null,
+    return Dismissible(
+      key: Key(widget.habit.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
-      onTap: _onTap,
+      onDismissed: (_) => ref
+          .read(habitListNotifierProvider(widget.userId).notifier)
+          .deleteHabit(habitId: widget.habit.id, userId: widget.userId),
+      child: ListTile(
+        title: Text(widget.habit.name),
+        subtitle: _checkedIn ? Text('🥕 +$_earnedPoints 획득!') : null,
+        trailing: Icon(
+          _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
+          color: _checkedIn ? Colors.orange : null,
+        ),
+        onTap: _onTap,
+      ),
     );
   }
 }
