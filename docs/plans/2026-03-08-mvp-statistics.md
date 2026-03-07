@@ -90,7 +90,7 @@ git commit -m "feat: add AllTimeStreakUseCase"
 
 ---
 
-## Task 66: HabitDetailScreen에 최장 스트릭 표시 (TDD)
+## Task 66: HabitDetailScreen에 최장 스트릭 표시 (TDD) ✅
 
 **Files:**
 

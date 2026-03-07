@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/entities/user.dart';
+import 'package:habit_rabbit/domain/usecases/all_time_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/get_checkins_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
@@ -29,6 +30,10 @@ class HabitDetailScreen extends ConsumerWidget {
           final today = DateTime.now();
           final useCase = GetCheckinsUseCase(repository);
           final rateUseCase = MonthlyCompletionRateUseCase();
+          final allTimeStreakUseCase = AllTimeStreakUseCase();
+
+          final allTimeStreak = allTimeStreakUseCase.call(checkins: checkins);
+          final rate = rateUseCase.call(checkins: checkins, today: today);
 
           return FutureBuilder<int>(
             future: useCase.currentStreak(
@@ -38,7 +43,6 @@ class HabitDetailScreen extends ConsumerWidget {
             ),
             builder: (context, streakSnapshot) {
               final streak = streakSnapshot.data ?? 0;
-              final rate = rateUseCase.call(checkins: checkins, today: today);
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -51,6 +55,17 @@ class HabitDetailScreen extends ConsumerWidget {
                         title: const Text('현재 스트릭'),
                         trailing: Text(
                           '$streak일',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.emoji_events),
+                        title: const Text('역대 최장'),
+                        trailing: Text(
+                          '$allTimeStreak일',
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),

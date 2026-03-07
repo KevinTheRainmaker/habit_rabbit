@@ -80,6 +80,35 @@ void main() {
       expect(find.textContaining('2'), findsWidgets);
     });
 
+    testWidgets('최장 스트릭 표시', (tester) async {
+      final mockRepo = MockHabitRepository();
+      // 1~5일 연속 체크인 → 최장 5일
+      final checkins = List.generate(5, (i) => Checkin(
+        id: 'c-$i',
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, i + 1),
+        streakDay: i,
+      ));
+      when(() => mockRepo.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => checkins);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: MaterialApp(
+            home: HabitDetailScreen(habit: habit, user: user),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('역대 최장'), findsOneWidget);
+      expect(find.textContaining('5일'), findsWidgets);
+    });
+
     testWidgets('이번 달 달성률 표시', (tester) async {
       final mockRepo = MockHabitRepository();
       when(() => mockRepo.getCheckins(habitId: 'h-1', userId: 'uid-1'))
