@@ -132,7 +132,7 @@ git commit -m "feat: wire onboarding flow in AppRouter"
 
 ---
 
-## Task 72: 전체 테스트 통과 확인
+## Task 72: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
