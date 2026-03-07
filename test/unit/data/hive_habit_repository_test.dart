@@ -1,0 +1,109 @@
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
+import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
+import 'package:habit_rabbit/domain/entities/habit.dart';
+
+void main() {
+  late Box box;
+  late Directory tempDir;
+
+  setUp(() async {
+    tempDir = await Directory.systemTemp.createTemp('hive_test_');
+    Hive.init(tempDir.path);
+    box = await Hive.openBox<Map>('habits_${DateTime.now().millisecondsSinceEpoch}');
+  });
+
+  tearDown(() async {
+    await box.close();
+    await tempDir.delete(recursive: true);
+  });
+
+  group('HiveHabitRepository', () {
+    test('처음에는 습관 목록이 비어 있다', () async {
+      final repo = HiveHabitRepository(box);
+      final habits = await repo.getHabits(userId: 'uid-1');
+      expect(habits, isEmpty);
+    });
+
+    test('addHabit: 추가 후 목록에 포함', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      final habits = await repo.getHabits(userId: 'uid-1');
+      expect(habits.length, equals(1));
+      expect(habits.first.name, equals('운동'));
+    });
+
+    test('getHabits: 다른 userId의 습관은 반환하지 않는다', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      final habits = await repo.getHabits(userId: 'uid-2');
+      expect(habits, isEmpty);
+    });
+
+    test('deleteHabit: 삭제 후 목록에서 제거', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      await repo.deleteHabit(habitId: 'h-1', userId: 'uid-1');
+      final habits = await repo.getHabits(userId: 'uid-1');
+      expect(habits, isEmpty);
+    });
+
+    test('checkIn: 체크인 후 Checkin 반환 (기본 10포인트)', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      final checkin = await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      expect(checkin.carrotPoints, equals(10));
+      expect(checkin.habitId, equals('h-1'));
+    });
+
+    test('checkIn: 같은 날 중복 체크인 시 예외 발생', () async {
+      final repo = HiveHabitRepository(box);
+      await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      expect(
+        () => repo.checkIn(
+          habitId: 'h-1',
+          userId: 'uid-1',
+          date: DateTime(2026, 3, 7),
+        ),
+        throwsException,
+      );
+    });
+  });
+}
