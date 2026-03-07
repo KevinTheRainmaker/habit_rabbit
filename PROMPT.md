@@ -22,7 +22,9 @@
 - `docs/plans/2026-03-07-mvp-streak-ui.md` — 스트릭 UI + 달성률 (Task 44~48) ✅ 완료
 - `docs/plans/2026-03-07-mvp-completion-card-wiring.md` — 달성률 카드 연결 + 편집 (Task 49~52) ✅ 완료
 - `docs/plans/2026-03-07-mvp-premium-gate.md` — 프리미엄 게이트 + 구독 (Task 53~57) ✅ 완료
-- `docs/plans/2026-03-07-mvp-notification-settings.md` — 오늘 필터 + 알림 설정 (Task 58~62) ← 현재
+- `docs/plans/2026-03-07-mvp-notification-settings.md` — 오늘 필터 + 알림 설정 (Task 58~62) ✅ 완료
+- `docs/plans/2026-03-08-mvp-statistics.md` — 통계 화면 (Task 63~67) ✅ 완료
+- `docs/plans/2026-03-08-mvp-onboarding.md` — 온보딩 흐름 (Task 68~72) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -38,7 +40,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-07-mvp-notification-settings.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-08-mvp-onboarding.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -54,7 +56,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 4: 태스크 완료 처리
 
-계획 파일에서 해당 태스크의 `- [ ]`를 `- [x]`로 변경.
+계획 파일에서 해당 태스크의 체크박스를 완료로 변경.
 
 ### Step 5: 커밋
 
@@ -98,8 +100,8 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-07-mvp-notification-settings.md`의 Task 58~62가 모두 완료되면:
+`docs/plans/2026-03-08-mvp-onboarding.md`의 Task 68~72가 모두 완료되면:
 
-1. `flutter test test/unit/` 전체 통과 확인
+1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 2. `git log --oneline -15` 출력
 3. `<promise>ALL TASKS COMPLETE</promise>` 출력
