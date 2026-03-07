@@ -34,6 +34,13 @@ class HabitListNotifier extends FamilyAsyncNotifier<List<Habit>, String> {
     final current = state.valueOrNull ?? [];
     state = AsyncData([...current, habit]);
   }
+
+  Future<void> deleteHabit({required String habitId, required String userId}) async {
+    final repo = ref.read(habitRepositoryProvider);
+    await repo.deleteHabit(habitId: habitId, userId: userId);
+    final current = state.valueOrNull ?? [];
+    state = AsyncData(current.where((h) => h.id != habitId).toList());
+  }
 }
 
 final habitListNotifierProvider =
