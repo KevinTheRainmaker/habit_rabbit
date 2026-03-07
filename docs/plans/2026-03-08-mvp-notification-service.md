@@ -34,7 +34,7 @@ git commit -m "feat: add NotificationService interface and InMemory impl"
 
 ---
 
-## Task 74: notificationServiceProvider (TDD)
+## Task 74: notificationServiceProvider (TDD) ✅
 
 Riverpod Provider로 NotificationService 제공.
 
