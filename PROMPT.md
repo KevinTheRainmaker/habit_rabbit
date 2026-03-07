@@ -20,7 +20,8 @@
 - `docs/plans/2026-03-07-mvp-add-habit.md` — 습관 추가 (Task 35~38) ✅ 완료
 - `docs/plans/2026-03-07-mvp-delete-habit.md` — 삭제 UI + Hive 영속성 (Task 39~43) ✅ 완료
 - `docs/plans/2026-03-07-mvp-streak-ui.md` — 스트릭 UI + 달성률 (Task 44~48) ✅ 완료
-- `docs/plans/2026-03-07-mvp-completion-card-wiring.md` — 달성률 카드 연결 + 편집 (Task 49~52) ← 현재
+- `docs/plans/2026-03-07-mvp-completion-card-wiring.md` — 달성률 카드 연결 + 편집 (Task 49~52) ✅ 완료
+- `docs/plans/2026-03-07-mvp-premium-gate.md` — 프리미엄 게이트 + 구독 (Task 53~57) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -36,7 +37,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-07-mvp-completion-card-wiring.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-07-mvp-premium-gate.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -96,7 +97,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-07-mvp-completion-card-wiring.md`의 Task 49~52가 모두 완료되면:
+`docs/plans/2026-03-07-mvp-premium-gate.md`의 Task 53~57이 모두 완료되면:
 
 1. `flutter test test/unit/` 전체 통과 확인
 2. `git log --oneline -15` 출력
