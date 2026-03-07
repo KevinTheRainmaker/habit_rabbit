@@ -32,7 +32,7 @@ git commit -m "feat: add equip/unequip to ShopRepository"
 
 ---
 
-## Task 85: CustomizationScreen 위젯 (TDD)
+## Task 85: CustomizationScreen 위젯 (TDD) ✅
 
 **Files:**
 
