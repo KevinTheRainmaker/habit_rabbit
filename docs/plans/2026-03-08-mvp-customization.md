@@ -80,7 +80,7 @@ git commit -m "feat: navigate to CustomizationScreen from ShopScreen"
 
 ---
 
-## Task 87: HabitListScreen 장착 아이템 표시 (TDD)
+## Task 87: HabitListScreen 장착 아이템 표시 (TDD) ✅
 
 **Files:**
 

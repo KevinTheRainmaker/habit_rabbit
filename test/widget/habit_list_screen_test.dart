@@ -11,6 +11,8 @@ import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
+import 'package:habit_rabbit/domain/entities/shop_item.dart';
+import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart';
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
@@ -319,6 +321,39 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('7일 연속'), findsOneWidget);
+    });
+
+    testWidgets('장착된 아이템 이름이 AppBar 서브타이틀에 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      const equippedItem = ShopItem(
+        id: 'hat-1',
+        name: '토끼 모자',
+        price: 100,
+        category: '의상',
+        isOwned: true,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            equippedItemsProvider.overrideWith(
+              (ref) async => [equippedItem],
+            ),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('토끼 모자'), findsOneWidget);
     });
 
     testWidgets('당근 포인트 탭 시 ShopScreen으로 이동', (tester) async {

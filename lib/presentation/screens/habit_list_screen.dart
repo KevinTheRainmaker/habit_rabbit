@@ -13,6 +13,7 @@ import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
+import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart';
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
@@ -25,10 +26,24 @@ class HabitListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
     final totalPoints = ref.watch(carrotPointsProvider);
+    final equippedAsync = ref.watch(equippedItemsProvider);
+    final equippedNames = equippedAsync.valueOrNull
+        ?.map((i) => i.name)
+        .join(', ');
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('내 습관'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('내 습관'),
+            if (equippedNames != null && equippedNames.isNotEmpty)
+              Text(
+                equippedNames,
+                style: const TextStyle(fontSize: 12),
+              ),
+          ],
+        ),
         actions: [
           GestureDetector(
             onTap: () => Navigator.of(context).push(
