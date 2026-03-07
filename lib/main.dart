@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
+import 'package:habit_rabbit/presentation/screens/login_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: HabitRabbitApp()));
@@ -19,7 +21,24 @@ class HabitRabbitApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const HabitListScreen(),
+      home: const _AuthGate(),
+    );
+  }
+}
+
+class _AuthGate extends ConsumerWidget {
+  const _AuthGate();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userAsync = ref.watch(currentUserProvider);
+
+    return userAsync.when(
+      data: (user) => user != null ? const HabitListScreen() : const LoginScreen(),
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => const LoginScreen(),
     );
   }
 }
