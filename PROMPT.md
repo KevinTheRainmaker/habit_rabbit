@@ -25,7 +25,8 @@
 - `docs/plans/2026-03-07-mvp-notification-settings.md` — 오늘 필터 + 알림 설정 (Task 58~62) ✅ 완료
 - `docs/plans/2026-03-08-mvp-statistics.md` — 통계 화면 (Task 63~67) ✅ 완료
 - `docs/plans/2026-03-08-mvp-onboarding.md` — 온보딩 흐름 (Task 68~72) ✅ 완료
-- `docs/plans/2026-03-08-mvp-notification-service.md` — 알림 서비스 + UI (Task 73~77) ← 현재
+- `docs/plans/2026-03-08-mvp-notification-service.md` — 알림 서비스 + UI (Task 73~77) ✅ 완료
+- `docs/plans/2026-03-08-mvp-item-shop.md` — 아이템 샵 (Task 78~83) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -41,7 +42,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-08-mvp-notification-service.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-08-mvp-item-shop.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -101,7 +102,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-08-mvp-notification-service.md`의 Task 73~77이 모두 완료되면:
+`docs/plans/2026-03-08-mvp-item-shop.md`의 Task 78~83이 모두 완료되면:
 
 1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 
