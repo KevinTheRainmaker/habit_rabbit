@@ -13,6 +13,7 @@ import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
+import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
@@ -29,11 +30,19 @@ class HabitListScreen extends ConsumerWidget {
         title: const Text('내 습관'),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Center(
               child: Text(
                 '🥕 $totalPoints',
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const NotificationSettingsScreen(),
               ),
             ),
           ),

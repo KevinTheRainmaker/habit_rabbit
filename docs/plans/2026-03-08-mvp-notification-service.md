@@ -95,7 +95,7 @@ git commit -m "feat: add NotificationSettingsScreen"
 
 ---
 
-## Task 76: HabitListScreen 설정 버튼 연결 (TDD)
+## Task 76: HabitListScreen 설정 버튼 연결 (TDD) ✅
 
 앱바에 설정 아이콘 버튼 → NotificationSettingsScreen 이동.
 
