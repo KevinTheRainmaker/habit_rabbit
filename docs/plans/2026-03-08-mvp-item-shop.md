@@ -54,7 +54,7 @@ git commit -m "feat: add ShopRepository and InMemory impl"
 
 ---
 
-## Task 80: shopProvider (TDD)
+## Task 80: shopProvider (TDD) ✅
 
 **Files:**
 
