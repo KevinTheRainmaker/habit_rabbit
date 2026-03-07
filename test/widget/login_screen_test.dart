@@ -34,5 +34,31 @@ void main() {
 
       expect(find.text('Habit Rabbit'), findsOneWidget);
     });
+
+    testWidgets('게스트로 시작 버튼 존재', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(home: LoginScreen()),
+        ),
+      );
+
+      expect(find.text('게스트로 시작'), findsOneWidget);
+    });
+
+    testWidgets('게스트 버튼 탭 시 onGuestLogin 콜백 호출', (tester) async {
+      bool called = false;
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: LoginScreen(onGuestLogin: () => called = true),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('게스트로 시작'));
+      await tester.pumpAndSettle();
+
+      expect(called, isTrue);
+    });
   });
 }

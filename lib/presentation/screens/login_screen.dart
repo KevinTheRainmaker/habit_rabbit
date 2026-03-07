@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LoginScreen extends ConsumerWidget {
-  const LoginScreen({super.key});
+  final VoidCallback? onGuestLogin;
+
+  const LoginScreen({super.key, this.onGuestLogin});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,6 +34,11 @@ class LoginScreen extends ConsumerWidget {
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Apple로 시작하기'),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: onGuestLogin,
+                child: const Text('게스트로 시작'),
               ),
             ],
           ),

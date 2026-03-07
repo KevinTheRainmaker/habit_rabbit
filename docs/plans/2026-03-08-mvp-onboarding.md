@@ -68,7 +68,7 @@ git commit -m "feat: add HabitRecommendationScreen"
 
 ---
 
-## Task 70: LoginScreen 위젯 (TDD)
+## Task 70: LoginScreen 위젯 (TDD) ✅
 
 앱 진입 시 보이는 로그인 화면 (게스트 모드 포함).
 
