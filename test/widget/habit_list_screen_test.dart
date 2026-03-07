@@ -146,6 +146,36 @@ void main() {
       expect(find.text('매일 운동'), findsNothing);
     });
 
+    testWidgets('오늘 요일이 아닌 습관은 목록에서 숨김', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      // 2026-03-07 토요일 → targetDays index 5
+      // 일요일(6)만 설정된 습관은 오늘 목록에 안 나와야 함
+      final sundayOnlyHabit = Habit(
+        id: 'h-1', userId: 'uid-1', name: '일요일 전용',
+        createdAt: DateTime(2026, 3, 7), isActive: true,
+        targetDays: const [6], // 일요일만
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [sundayOnlyHabit]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('일요일 전용'), findsNothing);
+      expect(find.text('습관을 추가해보세요!'), findsOneWidget);
+    });
+
     testWidgets('무료 사용자 3개 초과 시 PremiumGateScreen 표시', (tester) async {
       final mockHabit = MockHabitRepository();
       final mockAuth = MockAuthRepository();

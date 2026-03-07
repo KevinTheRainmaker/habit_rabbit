@@ -4,6 +4,7 @@ import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/today_habits_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkin_provider.dart';
@@ -44,13 +45,17 @@ class HabitListScreen extends ConsumerWidget {
           }
           final habitsAsync = ref.watch(habitListNotifierProvider(user.id));
           return habitsAsync.when(
-            data: (habits) {
+            data: (allHabits) {
+              final habits = TodayHabitsUseCase().call(
+                habits: allHabits,
+                today: DateTime.now(),
+              );
               if (habits.isEmpty) {
                 return const Center(child: Text('습관을 추가해보세요!'));
               }
               return Column(
                 children: [
-                  _CompletionSummary(habits: habits, userId: user.id),
+                  _CompletionSummary(habits: allHabits, userId: user.id),
                   Expanded(
                     child: ListView.builder(
                       itemCount: habits.length,
