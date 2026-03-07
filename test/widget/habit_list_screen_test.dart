@@ -150,16 +150,15 @@ void main() {
       final mockHabit = MockHabitRepository();
       final mockAuth = MockAuthRepository();
       const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
-      // 2026-03-07 토요일 → targetDays index 5
-      // 일요일(6)만 설정된 습관은 오늘 목록에 안 나와야 함
-      final sundayOnlyHabit = Habit(
-        id: 'h-1', userId: 'uid-1', name: '일요일 전용',
+      // targetDays 빈 리스트 → 어떤 요일에도 표시 안 됨 (날짜 독립적)
+      final neverShownHabit = Habit(
+        id: 'h-1', userId: 'uid-1', name: '안보이는 습관',
         createdAt: DateTime(2026, 3, 7), isActive: true,
-        targetDays: const [6], // 일요일만
+        targetDays: const [], // 어떤 요일도 아님
       );
       when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
       when(() => mockHabit.getHabits(userId: 'uid-1'))
-          .thenAnswer((_) async => [sundayOnlyHabit]);
+          .thenAnswer((_) async => [neverShownHabit]);
 
       await tester.pumpWidget(
         ProviderScope(
@@ -172,7 +171,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('일요일 전용'), findsNothing);
+      expect(find.text('안보이는 습관'), findsNothing);
       expect(find.text('습관을 추가해보세요!'), findsOneWidget);
     });
 
