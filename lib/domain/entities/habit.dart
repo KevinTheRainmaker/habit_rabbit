@@ -15,6 +15,20 @@ class Habit extends Equatable {
     required this.isActive,
   });
 
+  Habit copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    DateTime? createdAt,
+    bool? isActive,
+  }) => Habit(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    name: name ?? this.name,
+    createdAt: createdAt ?? this.createdAt,
+    isActive: isActive ?? this.isActive,
+  );
+
   @override
   List<Object> get props => [id];
 }

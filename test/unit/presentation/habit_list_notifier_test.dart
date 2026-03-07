@@ -56,6 +56,33 @@ void main() {
       expect(habits.first.name, equals('운동'));
     });
 
+    test('updateHabit: 습관 이름 수정', () async {
+      final original = Habit(
+        id: 'h-1', userId: 'uid-1', name: '운동',
+        createdAt: DateTime(2026, 3, 7), isActive: true,
+      );
+      final updated = Habit(
+        id: 'h-1', userId: 'uid-1', name: '매일 독서',
+        createdAt: DateTime(2026, 3, 7), isActive: true,
+      );
+      when(() => mockRepo.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [original]);
+      when(() => mockRepo.updateHabit(any())).thenAnswer((_) async {});
+
+      final container = ProviderContainer(
+        overrides: [habitRepositoryProvider.overrideWithValue(mockRepo)],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(habitListNotifierProvider('uid-1').future);
+      await container.read(habitListNotifierProvider('uid-1').notifier)
+          .updateHabit(updated);
+
+      final habits = await container.read(habitListNotifierProvider('uid-1').future);
+      expect(habits.length, equals(1));
+      expect(habits.first.name, equals('매일 독서'));
+    });
+
     test('deleteHabit: 목록에서 습관 제거', () async {
       final habit = Habit(
         id: 'h-1', userId: 'uid-1', name: '운동',

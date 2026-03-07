@@ -9,6 +9,7 @@ import 'package:habit_rabbit/presentation/providers/checkin_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
+import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class HabitListScreen extends ConsumerWidget {
@@ -158,6 +159,28 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
           color: _checkedIn ? Colors.orange : null,
         ),
         onTap: _onTap,
+        onLongPress: _onLongPress,
+      ),
+    );
+  }
+
+  void _onLongPress() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: EditHabitDialog(
+          habit: widget.habit,
+          onSaved: (name) {
+            ref
+                .read(habitListNotifierProvider(widget.userId).notifier)
+                .updateHabit(widget.habit.copyWith(name: name));
+            Navigator.of(context).pop();
+          },
+        ),
       ),
     );
   }
