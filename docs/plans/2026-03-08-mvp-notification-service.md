@@ -122,7 +122,7 @@ git commit -m "feat: navigate to NotificationSettingsScreen from AppBar"
 
 ---
 
-## Task 77: 전체 테스트 통과 확인
+## Task 77: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
