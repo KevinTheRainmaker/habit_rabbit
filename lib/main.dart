@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
+import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
 import 'package:habit_rabbit/presentation/screens/login_screen.dart';
 
-void main() {
-  runApp(const ProviderScope(child: HabitRabbitApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  final habitBox = await Hive.openBox('habits');
+  runApp(ProviderScope(
+    overrides: [
+      habitRepositoryProvider.overrideWithValue(HiveHabitRepository(habitBox)),
+    ],
+    child: const HabitRabbitApp(),
+  ));
 }
 
 class HabitRabbitApp extends StatelessWidget {
