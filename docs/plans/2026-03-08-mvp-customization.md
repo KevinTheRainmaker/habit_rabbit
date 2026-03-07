@@ -103,7 +103,7 @@ git commit -m "feat: show equipped items in HabitListScreen"
 
 ---
 
-## Task 88: 전체 테스트 통과 확인
+## Task 88: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
