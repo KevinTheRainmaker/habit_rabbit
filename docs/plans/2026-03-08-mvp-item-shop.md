@@ -78,7 +78,7 @@ git commit -m "feat: add shopProvider"
 
 ---
 
-## Task 81: ShopScreen 위젯 (TDD)
+## Task 81: ShopScreen 위젯 (TDD) ✅
 
 **Files:**
 
