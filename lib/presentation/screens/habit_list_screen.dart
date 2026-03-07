@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
+import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkin_provider.dart';
+import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/add_habit_dialog.dart';
+import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -41,11 +45,18 @@ class HabitListScreen extends ConsumerWidget {
               if (habits.isEmpty) {
                 return const Center(child: Text('습관을 추가해보세요!'));
               }
-              return ListView.builder(
-                itemCount: habits.length,
-                itemBuilder: (context, index) {
-                  return _HabitTile(habit: habits[index], userId: user.id);
-                },
+              return Column(
+                children: [
+                  _CompletionSummary(habits: habits, userId: user.id),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: habits.length,
+                      itemBuilder: (context, index) {
+                        return _HabitTile(habit: habits[index], userId: user.id);
+                      },
+                    ),
+                  ),
+                ],
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -149,5 +160,29 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         onTap: _onTap,
       ),
     );
+  }
+}
+
+class _CompletionSummary extends ConsumerWidget {
+  final List<Habit> habits;
+  final String userId;
+
+  const _CompletionSummary({required this.habits, required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allCheckins = habits.expand((habit) {
+      final asyncCheckins = ref.watch(
+        checkinsListProvider((habitId: habit.id, userId: userId)),
+      );
+      return asyncCheckins.valueOrNull ?? const [];
+    }).cast<Checkin>().toList();
+
+    final rate = MonthlyCompletionRateUseCase()(
+      checkins: allCheckins,
+      today: DateTime.now(),
+    );
+
+    return CompletionRateCard(rate: rate);
   }
 }
