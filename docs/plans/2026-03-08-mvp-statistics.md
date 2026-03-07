@@ -62,7 +62,7 @@ git commit -m "feat: navigate to HabitDetailScreen from tile"
 
 ---
 
-## Task 65: AllTimeStreakUseCase (TDD)
+## Task 65: AllTimeStreakUseCase (TDD) ✅
 
 전체 기간 최장 스트릭 계산.
 
