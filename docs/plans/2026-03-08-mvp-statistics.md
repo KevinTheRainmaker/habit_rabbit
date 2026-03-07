@@ -115,7 +115,7 @@ git commit -m "feat: show all-time streak in HabitDetailScreen"
 
 ---
 
-## Task 67: 전체 테스트 통과 확인
+## Task 67: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
