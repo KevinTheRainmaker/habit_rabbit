@@ -99,7 +99,7 @@ git commit -m "feat: add LoginScreen"
 
 ---
 
-## Task 71: 앱 진입 흐름 연결 (TDD)
+## Task 71: 앱 진입 흐름 연결 (TDD) ✅
 
 첫 실행 → LoginScreen → OnboardingScreen → HabitListScreen.
 
