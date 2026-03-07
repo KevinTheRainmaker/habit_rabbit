@@ -104,7 +104,7 @@ git commit -m "feat: add ShopScreen"
 
 ---
 
-## Task 82: HabitListScreen 샵 버튼 연결 (TDD)
+## Task 82: HabitListScreen 샵 버튼 연결 (TDD) ✅
 
 **Files:**
 
