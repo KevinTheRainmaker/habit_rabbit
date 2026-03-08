@@ -46,7 +46,8 @@
 - `docs/plans/2026-03-09-mvp-readiness-expire.md` — 준비 카드 억제 + 만료 배너 (Task 148~150) ✅ 완료
 - `docs/plans/2026-03-09-mvp-notification-teaser.md` — 알림 토끼언어 + 티저 (Task 151~153) ✅ 완료
 - `docs/plans/2026-03-09-mvp-blur-wiring.md` — 블러 연결 + 온보딩 스킵 + 알림 게이트 (Task 154~157) ✅ 완료
-- `docs/plans/2026-03-09-mvp-premium-notifications.md` — 알림 isPremium 연결 + 요일별 알림 UI + 심화통계 (Task 158~161) ← 현재
+- `docs/plans/2026-03-09-mvp-premium-notifications.md` — 알림 isPremium 연결 + 요일별 알림 UI + 심화통계 (Task 158~161) ✅ 완료
+- `docs/plans/2026-03-09-mvp-icon-restore.md` — 습관 아이콘 + 구독 복원 (Task 162~165) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -62,7 +63,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-09-mvp-premium-notifications.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-09-mvp-icon-restore.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -122,7 +123,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-09-mvp-premium-notifications.md`의 Task 158~161이 모두 완료되면:
+`docs/plans/2026-03-09-mvp-icon-restore.md`의 Task 162~165이 모두 완료되면:
 
 1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 
