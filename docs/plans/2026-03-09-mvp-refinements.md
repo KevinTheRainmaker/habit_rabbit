@@ -84,7 +84,7 @@ git commit -m "feat: show streak milestone message after checkin"
 
 ---
 
-## Task 123: 페이월 화면 개선 (TDD)
+## Task 123: 페이월 화면 개선 (TDD) ✅
 
 Story 22 AC: 무료 vs 유료 기능 비교 표시.
 
