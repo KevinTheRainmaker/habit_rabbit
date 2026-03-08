@@ -205,6 +205,24 @@ void main() {
       expect(find.textContaining('주간'), findsOneWidget);
     });
 
+    testWidgets('체크인 없을 때 "아직 기록이 없어요" 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('아직 기록이 없어요'), findsOneWidget);
+    });
+
     testWidgets('습관별 달성률 표시', (tester) async {
       final mockHabit = MockHabitRepository();
       final habits = [

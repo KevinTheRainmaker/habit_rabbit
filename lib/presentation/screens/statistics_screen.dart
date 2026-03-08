@@ -67,6 +67,12 @@ class StatisticsScreen extends ConsumerWidget {
                       label: '총 적립 당근',
                       value: '${allCheckins.fold(0, (sum, c) => sum + c.carrotPoints)}개',
                     ),
+                    if (habits.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('아직 기록이 없어요',
+                            style: TextStyle(color: Colors.grey)),
+                      ),
                     const SizedBox(height: 20),
                     const Text('습관별 달성률', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
