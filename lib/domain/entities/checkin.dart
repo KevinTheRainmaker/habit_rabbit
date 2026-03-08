@@ -20,7 +20,9 @@ class Checkin extends Equatable {
   /// 30일 달성 (streakDay == 29): +10
   int get carrotPoints {
     int points = 10;
-    if (streakDay == 29) {
+    if (streakDay == 99) {
+      points += 15;
+    } else if (streakDay == 29) {
       points += 10;
     } else if (streakDay == 6) {
       points += 5;

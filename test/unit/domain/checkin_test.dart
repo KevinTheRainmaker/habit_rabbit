@@ -39,6 +39,18 @@ void main() {
       expect(checkin.carrotPoints, equals(20));
     });
 
+    test('스트릭 99일(100일 달성): 보너스 15포인트 추가 = 25포인트', () {
+      final checkin = Checkin(
+        id: 'c-1',
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+        streakDay: 99,
+      );
+
+      expect(checkin.carrotPoints, equals(25));
+    });
+
     test('(habit-1, uid-1, 2026-03-07) 동일 조합은 동일한 체크인', () {
       final c1 = Checkin(
         id: 'c-1',
