@@ -17,7 +17,9 @@ import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/domain/usecases/streak_break_check_usecase.dart';
+import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
+import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
 import 'package:habit_rabbit/presentation/screens/streak_break_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
@@ -63,6 +65,18 @@ class HabitListScreen extends ConsumerWidget {
                 ),
               ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () {
+              final user = ref.read(currentUserProvider).valueOrNull;
+              if (user == null) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => StatisticsScreen(userId: user.id),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events_outlined),
@@ -209,6 +223,12 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
           today: today,
         ).isStreakBroken;
 
+    final ticketAsync = ref.watch(
+      recoveryTicketProvider(widget.user.id),
+    );
+    final freeTrialUsed =
+        ticketAsync.valueOrNull?.freeTrialUsed ?? false;
+
     return Column(
       children: [
         CompletionRateCard(
@@ -225,9 +245,13 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
           ),
         if (isStreakBroken)
           StreakBreakDialog(
-            freeTrialUsed: false,
-            onUseFreeRecovery: () =>
-                setState(() => _streakBreakDismissed = true),
+            freeTrialUsed: freeTrialUsed,
+            onUseFreeRecovery: () {
+              ref
+                  .read(recoveryRepositoryProvider)
+                  .useFreeTrial(userId: widget.user.id);
+              setState(() => _streakBreakDismissed = true);
+            },
             onRestart: () => setState(() => _streakBreakDismissed = true),
           ),
         Expanded(
