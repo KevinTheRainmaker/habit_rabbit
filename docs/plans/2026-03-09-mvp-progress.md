@@ -77,7 +77,7 @@ git commit -m "feat: show total carrot points in StatisticsScreen"
 
 ---
 
-## Task 119: 전체 테스트 통과 확인
+## Task 119: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
