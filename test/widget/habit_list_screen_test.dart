@@ -1075,7 +1075,7 @@ void main() {
         name: '운동',
         createdAt: DateTime(2026, 3, 1),
         isActive: true,
-        targetDays: [1, 2, 3, 4, 5, 6, 7],
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
       );
       when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
       when(() => mockHabit.getHabits(userId: 'uid-1'))

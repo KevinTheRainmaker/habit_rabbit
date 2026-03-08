@@ -17,8 +17,7 @@ import 'package:habit_rabbit/presentation/providers/onboarding_provider.dart';
 import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
-import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
-import 'package:habit_rabbit/presentation/screens/login_screen.dart';
+import 'package:habit_rabbit/presentation/screens/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,24 +81,7 @@ class HabitRabbitApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
-      home: const _AuthGate(),
-    );
-  }
-}
-
-class _AuthGate extends ConsumerWidget {
-  const _AuthGate();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final userAsync = ref.watch(currentUserProvider);
-
-    return userAsync.when(
-      data: (user) => user != null ? const HabitListScreen() : const LoginScreen(),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (_, __) => const LoginScreen(),
+      home: const AppRouter(),
     );
   }
 }

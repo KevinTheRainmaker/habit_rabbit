@@ -63,7 +63,8 @@
 - `docs/plans/2026-03-09-mvp-mission-autocheck.md` — 미션 자동 달성 (Task 203~205) ✅ 완료
 - `docs/plans/2026-03-09-mvp-auth-persistence.md` — 인증 영속성 (Task 206~208) ✅ 완료
 - `docs/plans/2026-03-10-mvp-notification-persistence.md` — 알림 설정 영속성 (Task 209~211) ✅ 완료
-- `docs/plans/2026-03-10-mvp-onboarding-persistence.md` — 온보딩 영속성 (Task 212~214) ← 현재
+- `docs/plans/2026-03-10-mvp-onboarding-persistence.md` — 온보딩 영속성 (Task 212~214) ✅ 완료
+- `docs/plans/2026-03-10-mvp-router-wiring.md` — 라우터 연결 (Task 215~216) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -79,7 +80,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-10-mvp-onboarding-persistence.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-10-mvp-router-wiring.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -139,7 +140,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-10-mvp-onboarding-persistence.md`의 Task 212~214이 모두 완료되면:
+`docs/plans/2026-03-10-mvp-router-wiring.md`의 Task 215~216이 모두 완료되면:
 
 1. `flutter test` 전체 통과 확인
 2. `flutter analyze --no-fatal-infos` 에러 0건 확인
