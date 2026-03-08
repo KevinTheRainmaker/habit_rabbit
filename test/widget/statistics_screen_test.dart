@@ -7,6 +7,7 @@ import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
+import 'package:habit_rabbit/presentation/widgets/premium_blur_overlay.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
@@ -221,6 +222,53 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('아직 기록이 없어요'), findsOneWidget);
+    });
+
+    testWidgets('무료 사용자 통계 화면에 PremiumBlurOverlay 업그레이드 버튼 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final habits = [
+        Habit(id: 'h-1', userId: 'uid-1', name: '매일 운동', createdAt: DateTime(2026, 3, 7), isActive: true),
+      ];
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => habits);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: false),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PremiumBlurOverlay), findsOneWidget);
+      expect(find.textContaining('구독하면 이런 인사이트를'), findsOneWidget);
+    });
+
+    testWidgets('유료 사용자 통계 화면에 PremiumBlurOverlay 업그레이드 버튼 미표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final habits = [
+        Habit(id: 'h-1', userId: 'uid-1', name: '매일 운동', createdAt: DateTime(2026, 3, 7), isActive: true),
+      ];
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => habits);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('구독하면 이런 인사이트를'), findsNothing);
     });
 
     testWidgets('습관별 달성률 표시', (tester) async {

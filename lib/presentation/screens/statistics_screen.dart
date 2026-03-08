@@ -4,6 +4,7 @@ import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/usecases/weekly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
+import 'package:habit_rabbit/presentation/widgets/premium_blur_overlay.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
 
 class StatisticsScreen extends ConsumerWidget {
@@ -74,26 +75,38 @@ class StatisticsScreen extends ConsumerWidget {
                             style: TextStyle(color: Colors.grey)),
                       ),
                     const SizedBox(height: 20),
-                    const Text('습관별 달성률', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    ...habits.map((habit) {
-                      final habitCheckins = allCheckins.where((c) => c.habitId == habit.id).toList();
-                      final today = DateTime.now();
-                      final daysSinceCreation = today.difference(habit.createdAt).inDays + 1;
-                      final rate = daysSinceCreation > 0
-                          ? (habitCheckins.length / daysSinceCreation).clamp(0.0, 1.0)
-                          : 0.0;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(habit.name)),
-                            Text('${(rate * 100).round()}%',
-                                style: const TextStyle(fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      );
-                    }),
+                    PremiumBlurOverlay(
+                      isPremium: isPremium,
+                      onUpgrade: () {},
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 160),
+                        child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('습관별 달성률', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          ...habits.map((habit) {
+                            final habitCheckins = allCheckins.where((c) => c.habitId == habit.id).toList();
+                            final today = DateTime.now();
+                            final daysSinceCreation = today.difference(habit.createdAt).inDays + 1;
+                            final rate = daysSinceCreation > 0
+                                ? (habitCheckins.length / daysSinceCreation).clamp(0.0, 1.0)
+                                : 0.0;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  Expanded(child: Text(habit.name)),
+                                  Text('${(rate * 100).round()}%',
+                                      style: const TextStyle(fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                      ),
+                    ),
                   ],
                 ),
               ),
