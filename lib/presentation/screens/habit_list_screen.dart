@@ -32,6 +32,7 @@ import 'package:habit_rabbit/domain/usecases/carrot_balance_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/mission_check_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
@@ -126,9 +127,10 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen> {
           final habitsAsync = ref.watch(habitListNotifierProvider(user.id));
           return habitsAsync.when(
             data: (allHabits) {
+              final today = ref.watch(currentDateProvider);
               final habits = TodayHabitsUseCase().call(
                 habits: allHabits,
-                today: DateTime.now(),
+                today: today,
               );
               if (habits.isEmpty) {
                 return EmptyHabitState(
