@@ -85,5 +85,31 @@ void main() {
 
       expect(find.textContaining('저장'), findsOneWidget);
     });
+
+    testWidgets('무료 사용자에게 요일별 알림 세분화 프리미엄 안내 표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: NotificationSettingsScreen(isPremium: false),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('유료 전용'), findsOneWidget);
+    });
+
+    testWidgets('유료 사용자에게 요일별 알림 세분화 프리미엄 안내 미표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: NotificationSettingsScreen(isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('유료 전용'), findsNothing);
+    });
   });
 }

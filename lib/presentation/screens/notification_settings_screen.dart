@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/presentation/providers/notification_provider.dart';
 
 class NotificationSettingsScreen extends ConsumerWidget {
-  const NotificationSettingsScreen({super.key});
+  final bool isPremium;
+
+  const NotificationSettingsScreen({super.key, this.isPremium = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,6 +33,13 @@ class NotificationSettingsScreen extends ConsumerWidget {
               );
             },
           ),
+          if (!isPremium)
+            ListTile(
+              leading: const Icon(Icons.lock_outline),
+              title: const Text('요일별 알림 세분화'),
+              subtitle: const Text('유료 전용 기능이에요'),
+              enabled: false,
+            ),
           ListTile(
             title: const Text('알림 시간'),
             subtitle: Text(
