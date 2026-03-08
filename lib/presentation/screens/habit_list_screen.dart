@@ -397,6 +397,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
           .read(habitListNotifierProvider(widget.userId).notifier)
           .deleteHabit(habitId: widget.habit.id, userId: widget.userId),
       child: ListTile(
+        leading: widget.habit.icon.isNotEmpty ? Text(widget.habit.icon, style: const TextStyle(fontSize: 24)) : null,
         title: Text(widget.habit.name),
         subtitle: _checkedIn
             ? Text(_milestoneMessage != null
@@ -441,10 +442,10 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         ),
         child: EditHabitDialog(
           habit: widget.habit,
-          onSaved: (name, days) {
+          onSaved: (name, days, icon) {
             ref
                 .read(habitListNotifierProvider(widget.userId).notifier)
-                .updateHabit(widget.habit.copyWith(name: name, targetDays: days));
+                .updateHabit(widget.habit.copyWith(name: name, targetDays: days, icon: icon));
             Navigator.of(context).pop();
           },
         ),
