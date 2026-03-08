@@ -82,7 +82,7 @@ git commit -m "feat: show save confirmation snackbar in NotificationSettings"
 
 ---
 
-## Task 132: 전체 테스트 통과 확인
+## Task 132: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
