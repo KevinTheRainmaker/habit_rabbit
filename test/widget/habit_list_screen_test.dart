@@ -7,8 +7,10 @@ import 'package:habit_rabbit/domain/entities/shop_item.dart';
 import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/repositories/auth_repository.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
+import 'package:habit_rabbit/domain/repositories/mission_repository.dart';
 import 'package:habit_rabbit/domain/repositories/shop_repository.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
+import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
@@ -26,6 +28,7 @@ import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 class MockHabitRepository extends Mock implements HabitRepository {}
 class MockAuthRepository extends Mock implements AuthRepository {}
 class MockShopRepository extends Mock implements ShopRepository {}
+class MockMissionRepository extends Mock implements MissionRepository {}
 
 void main() {
   group('HabitListScreen', () {
@@ -1059,6 +1062,58 @@ void main() {
       final earned = checkins.fold(0, (s, c) => s + c.carrotPoints);
       final balance = earned - ownedItem.price;
       expect(find.textContaining('$balance'), findsWidgets);
+    });
+
+    testWidgets('첫 체크인 완료 시 mission-first-checkin 미션 자동 완료', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      final mockMission = MockMissionRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+        targetDays: [1, 2, 3, 4, 5, 6, 7],
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+      when(() => mockHabit.checkIn(
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: any(named: 'date'),
+          )).thenAnswer((_) async => Checkin(
+            id: 'c-1',
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: DateTime.now(),
+            streakDay: 0,
+          ));
+      when(() => mockMission.getMissions()).thenAnswer((_) async => []);
+      when(() => mockMission.completeMission(missionId: any(named: 'missionId')))
+          .thenAnswer((_) async {});
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            missionRepositoryProvider.overrideWithValue(mockMission),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('운동'));
+      await tester.pumpAndSettle();
+
+      verify(() => mockMission.completeMission(missionId: 'mission-first-checkin'))
+          .called(1);
     });
   });
 }

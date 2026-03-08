@@ -28,7 +28,10 @@ import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 import 'package:habit_rabbit/domain/usecases/current_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/best_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/carrot_balance_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/mission_check_usecase.dart';
+import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
@@ -361,6 +364,28 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
   int _streak = 0;
   String? _milestoneMessage;
 
+  Future<void> _autoCompleteMissions(int newStreakDay) async {
+    final repo = ref.read(missionRepositoryProvider);
+    final missions = await repo.getMissions();
+    final completedIds = missions.where((m) => m.isCompleted).map((m) => m.id).toSet();
+
+    // newStreakDay is the streak after the new checkin (1-indexed)
+    final pending = MissionCheckUseCase(
+      totalCheckins: newStreakDay,
+      habitCount: 1,
+      bestStreak: newStreakDay,
+    ).completableMissionIds;
+
+    for (final id in pending) {
+      if (!completedIds.contains(id)) {
+        try {
+          await repo.completeMission(missionId: id);
+          ref.invalidate(missionsProvider);
+        } catch (_) {}
+      }
+    }
+  }
+
   Future<void> _onTap() async {
     if (_checkedIn) return;
     try {
@@ -379,6 +404,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         _streak = streak;
         _milestoneMessage = StreakMilestoneUseCase(streak: streak).message;
       });
+      _autoCompleteMissions(checkin.streakDay + 1);
     } catch (_) {
       // 이미 체크인한 경우 무시
     }
