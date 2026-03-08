@@ -40,6 +40,18 @@ class NotificationSettingsScreen extends ConsumerWidget {
               subtitle: const Text('유료 전용 기능이에요'),
               enabled: false,
             ),
+          if (isPremium) ...[
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Text('요일별 알림 시간', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            for (final day in ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'])
+              ListTile(
+                title: Text(day),
+                trailing: const Text('09:00'),
+                onTap: () {},
+              ),
+          ],
           ListTile(
             title: const Text('알림 시간'),
             subtitle: Text(
