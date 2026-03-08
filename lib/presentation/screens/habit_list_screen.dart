@@ -28,11 +28,18 @@ import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
 
-class HabitListScreen extends ConsumerWidget {
+class HabitListScreen extends ConsumerStatefulWidget {
   const HabitListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HabitListScreen> createState() => _HabitListScreenState();
+}
+
+class _HabitListScreenState extends ConsumerState<HabitListScreen> {
+  int _upsellCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
     final totalPoints = ref.watch(carrotPointsProvider);
     final equippedAsync = ref.watch(equippedItemsProvider);
@@ -114,7 +121,7 @@ class HabitListScreen extends ConsumerWidget {
               );
               if (habits.isEmpty) {
                 return EmptyHabitState(
-                  onAdd: () => _showAddHabitDialog(context, ref, user),
+                  onAdd: () => _showAddHabitDialog(context, user),
                 );
               }
               return _HabitListBody(
@@ -134,20 +141,22 @@ class HabitListScreen extends ConsumerWidget {
         data: (user) => user == null
             ? null
             : FloatingActionButton(
-                onPressed: () => _showAddHabitDialog(context, ref, user),
+                onPressed: () => _showAddHabitDialog(context, user),
                 child: const Icon(Icons.add),
               ),
       ),
     );
   }
 
-  void _showAddHabitDialog(BuildContext context, WidgetRef ref, User user) {
+  void _showAddHabitDialog(BuildContext context, User user) {
     final userId = user.id;
     final isPremium = user.isPremium;
 
     if (!isPremium) {
       final habits = ref.read(habitListNotifierProvider(userId)).valueOrNull ?? [];
       if (habits.length >= 3) {
+        if (_upsellCount >= 3) return;
+        setState(() => _upsellCount++);
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
