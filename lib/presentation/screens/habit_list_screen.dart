@@ -26,6 +26,7 @@ import 'package:habit_rabbit/presentation/screens/streak_break_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
+import 'package:habit_rabbit/domain/usecases/current_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
@@ -271,6 +272,10 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
             checkins: allCheckins,
             today: today,
           ),
+          currentStreak: CurrentStreakUseCase(
+            checkins: allCheckins.map((c) => c.date).toList(),
+            today: today,
+          ).currentStreak,
         ),
         if (showReadiness)
           HabitReadinessCard(
