@@ -60,5 +60,37 @@ void main() {
 
       expect(called, isTrue);
     });
+
+    testWidgets('Google 버튼 탭 시 onGoogleLogin 콜백 호출', (tester) async {
+      bool called = false;
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: LoginScreen(onGoogleLogin: () => called = true),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Google로 시작하기'));
+      await tester.pumpAndSettle();
+
+      expect(called, isTrue);
+    });
+
+    testWidgets('Apple 버튼 탭 시 onAppleLogin 콜백 호출', (tester) async {
+      bool called = false;
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: LoginScreen(onAppleLogin: () => called = true),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Apple로 시작하기'));
+      await tester.pumpAndSettle();
+
+      expect(called, isTrue);
+    });
   });
 }

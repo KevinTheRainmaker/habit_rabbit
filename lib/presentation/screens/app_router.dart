@@ -25,10 +25,9 @@ class AppRouter extends ConsumerWidget {
       data: (user) {
         if (user == null) {
           return LoginScreen(
-            onGuestLogin: () {
-              // 게스트 모드: 임시 user 생성 (InMemory auth)
-              // 실제로는 authRepository.signInAsGuest() 호출
-            },
+            onGuestLogin: () => ref.read(authRepositoryProvider).signInAsGuest(),
+            onGoogleLogin: () => ref.read(authRepositoryProvider).signInWithGoogle(),
+            onAppleLogin: () => ref.read(authRepositoryProvider).signInWithApple(),
           );
         }
 

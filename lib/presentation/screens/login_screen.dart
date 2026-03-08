@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LoginScreen extends ConsumerWidget {
   final VoidCallback? onGuestLogin;
+  final VoidCallback? onGoogleLogin;
+  final VoidCallback? onAppleLogin;
 
-  const LoginScreen({super.key, this.onGuestLogin});
+  const LoginScreen({super.key, this.onGuestLogin, this.onGoogleLogin, this.onAppleLogin});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,12 +25,12 @@ class LoginScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 48),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: onGoogleLogin,
                 child: const Text('Google로 시작하기'),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: onAppleLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,

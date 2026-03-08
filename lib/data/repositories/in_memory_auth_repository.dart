@@ -37,6 +37,18 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<User> signInAsGuest() async {
+    const user = User(
+      id: 'guest-uid',
+      email: 'guest@habit-rabbit.app',
+      isPremium: false,
+    );
+    _currentUser = user;
+    _controller.add(user);
+    return user;
+  }
+
+  @override
   Future<void> signOut() async {
     _currentUser = null;
     _controller.add(null);
