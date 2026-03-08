@@ -61,6 +61,17 @@ void main() {
       expect(find.text('알림 설정'), findsOneWidget);
     });
 
+    testWidgets('알림 설정 화면에 토끼 알림 문구 표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(home: NotificationSettingsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('당근이 기다리고 있어요'), findsOneWidget);
+    });
+
     testWidgets('알림 토글 변경 시 저장 메시지 표시', (tester) async {
       await tester.pumpWidget(
         const ProviderScope(

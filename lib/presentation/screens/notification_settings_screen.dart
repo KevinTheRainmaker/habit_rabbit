@@ -13,6 +13,13 @@ class NotificationSettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('알림 설정')),
       body: ListView(
         children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              '🥕 당근이 기다리고 있어요! 알림을 설정하면 습관을 잊지 않을 수 있어요.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
           SwitchListTile(
             title: const Text('알림 활성화'),
             value: settings.isEnabled,
