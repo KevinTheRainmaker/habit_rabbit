@@ -123,6 +123,69 @@ void main() {
       expect(habits.first.icon, equals('🧘'));
     });
 
+    test('getCheckins: 체크인 후 목록에서 조회 가능', () async {
+      final repo = HiveHabitRepository(box);
+      await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      final checkins = await repo.getCheckins(habitId: 'h-1', userId: 'uid-1');
+      expect(checkins.length, equals(1));
+      expect(checkins.first.habitId, equals('h-1'));
+      expect(checkins.first.date.day, equals(7));
+    });
+
+    test('getCheckins: Box 재생성 후에도 체크인 복원됨 (영속성)', () async {
+      final repo = HiveHabitRepository(box);
+      await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      final repo2 = HiveHabitRepository(box);
+      final checkins = await repo2.getCheckins(habitId: 'h-1', userId: 'uid-1');
+      expect(checkins.length, equals(1));
+    });
+
+    test('deleteHabit: 삭제 시 관련 체크인도 함께 삭제', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      await repo.deleteHabit(habitId: 'h-1', userId: 'uid-1');
+      final checkins = await repo.getCheckins(habitId: 'h-1', userId: 'uid-1');
+      expect(checkins, isEmpty);
+    });
+
+    test('checkIn: 7번째 체크인 시 15포인트 (streakDay=6)', () async {
+      final repo = HiveHabitRepository(box);
+      for (int i = 0; i < 6; i++) {
+        await repo.checkIn(
+          habitId: 'h-1',
+          userId: 'uid-1',
+          date: DateTime(2026, 3, 1 + i),
+        );
+      }
+      final checkin7 = await repo.checkIn(
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 7),
+      );
+      expect(checkin7.streakDay, equals(6));
+      expect(checkin7.carrotPoints, equals(15));
+    });
+
     test('checkIn: 같은 날 중복 체크인 시 예외 발생', () async {
       final repo = HiveHabitRepository(box);
       await repo.checkIn(
