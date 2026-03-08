@@ -63,5 +63,17 @@ void main() {
 
       expect(find.text('잘하고 있어!'), findsNothing);
     });
+
+    testWidgets('스트릭 0이고 달성률 70% 이상이면 특별 메시지 표시', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CompletionRateCard(rate: 0.7, currentStreak: 0),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('이번 달 70% 달성했어'), findsOneWidget);
+    });
   });
 }

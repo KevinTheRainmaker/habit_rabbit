@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class CompletionRateCard extends StatelessWidget {
   final double rate;
+  final int currentStreak;
 
-  const CompletionRateCard({super.key, required this.rate});
+  const CompletionRateCard({super.key, required this.rate, this.currentStreak = -1});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,10 @@ class CompletionRateCard extends StatelessWidget {
                   LinearProgressIndicator(value: rate),
                   if (rate >= 0.7) ...[
                     const SizedBox(height: 8),
-                    const Text('잘하고 있어!'),
+                    if (currentStreak == 0)
+                      Text('이번 달 ${(rate * 100).round()}% 달성했어, 잘하고 있어!')
+                    else
+                      const Text('잘하고 있어!'),
                   ],
                 ],
               ),
