@@ -107,6 +107,25 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                       ),
                     ),
+                    if (isPremium) ...[
+                      const SizedBox(height: 20),
+                      const Text('요일별 달성 패턴', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      ...['월', '화', '수', '목', '금', '토', '일'].map((day) {
+                        final dayIndex = ['월', '화', '수', '목', '금', '토', '일'].indexOf(day);
+                        final dayCheckins = allCheckins.where((c) => c.date.weekday == (dayIndex + 1) % 7 + 1).length;
+                        final pct = habits.isEmpty ? 0 : (dayCheckins * 100 ~/ habits.length);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 40, child: Text(day)),
+                              Expanded(child: Text('$pct%')),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
                   ],
                 ),
               ),

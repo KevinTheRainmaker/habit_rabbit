@@ -224,6 +224,49 @@ void main() {
       expect(find.text('아직 기록이 없어요'), findsOneWidget);
     });
 
+    testWidgets('유료 사용자에게 요일별 달성 패턴 섹션 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 요일별 달성 패턴 섹션은 스크롤 필요할 수 있으므로 scrollUntilVisible 사용
+      await tester.scrollUntilVisible(
+        find.textContaining('요일별 달성 패턴'),
+        500,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.textContaining('요일별 달성 패턴'), findsOneWidget);
+    });
+
+    testWidgets('무료 사용자에게 요일별 달성 패턴 섹션 미표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: false),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('요일별 달성 패턴'), findsNothing);
+    });
+
     testWidgets('무료 사용자 통계 화면에 PremiumBlurOverlay 업그레이드 버튼 표시', (tester) async {
       final mockHabit = MockHabitRepository();
       final habits = [
