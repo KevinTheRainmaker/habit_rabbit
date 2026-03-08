@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
+import 'package:habit_rabbit/data/repositories/hive_recovery_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_shop_repository.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
+import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
 import 'package:habit_rabbit/presentation/screens/login_screen.dart';
@@ -14,10 +16,12 @@ void main() async {
   await Hive.initFlutter();
   final habitBox = await Hive.openBox('habits');
   final shopBox = await Hive.openBox('shop');
+  final recoveryBox = await Hive.openBox('recovery');
   runApp(ProviderScope(
     overrides: [
       habitRepositoryProvider.overrideWithValue(HiveHabitRepository(habitBox)),
       shopRepositoryProvider.overrideWithValue(HiveShopRepository(shopBox)),
+      recoveryRepositoryProvider.overrideWithValue(HiveRecoveryRepository(recoveryBox)),
     ],
     child: const HabitRabbitApp(),
   ));
