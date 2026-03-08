@@ -165,7 +165,7 @@ class HabitListScreen extends ConsumerWidget {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: AddHabitDialog(
-          onSaved: (name) {
+          onSaved: (name, days) {
             ref
                 .read(habitListNotifierProvider(userId).notifier)
                 .addHabit(name: name, userId: userId);
@@ -271,7 +271,7 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
                   child: AddHabitDialog(
-                    onSaved: (name) {
+                    onSaved: (name, days) {
                       ref
                           .read(habitListNotifierProvider(userId).notifier)
                           .addHabit(name: name, userId: userId);
