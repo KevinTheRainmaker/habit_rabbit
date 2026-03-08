@@ -4,12 +4,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:habit_rabbit/data/repositories/hive_auth_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_mission_repository.dart';
+import 'package:habit_rabbit/data/repositories/hive_notification_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_recovery_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_shop_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_subscription_repository.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
+import 'package:habit_rabbit/presentation/providers/notification_provider.dart';
 import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
@@ -25,6 +27,9 @@ void main() async {
   final missionBox = await Hive.openBox('missions');
   final subscriptionBox = await Hive.openBox('subscription');
   final authBox = await Hive.openBox('auth');
+  final notifBox = await Hive.openBox('notification');
+  final notifRepo = HiveNotificationRepository(notifBox);
+  final initialNotifSettings = await notifRepo.loadSettings();
   runApp(ProviderScope(
     overrides: [
       habitRepositoryProvider.overrideWithValue(HiveHabitRepository(habitBox)),
@@ -33,16 +38,24 @@ void main() async {
       missionRepositoryProvider.overrideWithValue(HiveMissionRepository(missionBox)),
       subscriptionRepositoryProvider.overrideWithValue(HiveSubscriptionRepository(subscriptionBox)),
       authRepositoryProvider.overrideWithValue(HiveAuthRepository(authBox)),
+      notificationSettingsProvider.overrideWith((ref) => initialNotifSettings),
     ],
-    child: const HabitRabbitApp(),
+    child: HabitRabbitApp(notifRepo: notifRepo),
   ));
 }
 
-class HabitRabbitApp extends StatelessWidget {
-  const HabitRabbitApp({super.key});
+class HabitRabbitApp extends ConsumerWidget {
+  final HiveNotificationRepository? notifRepo;
+
+  const HabitRabbitApp({this.notifRepo, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (notifRepo != null) {
+      ref.listen(notificationSettingsProvider, (_, next) {
+        notifRepo!.saveSettings(next);
+      });
+    }
     return MaterialApp(
       title: 'Habit Rabbit',
       theme: ThemeData(
