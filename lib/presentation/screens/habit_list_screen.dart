@@ -168,7 +168,7 @@ class HabitListScreen extends ConsumerWidget {
           onSaved: (name, days) {
             ref
                 .read(habitListNotifierProvider(userId).notifier)
-                .addHabit(name: name, userId: userId);
+                .addHabit(name: name, userId: userId, targetDays: days);
             Navigator.of(context).pop();
           },
         ),
@@ -274,7 +274,7 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
                     onSaved: (name, days) {
                       ref
                           .read(habitListNotifierProvider(userId).notifier)
-                          .addHabit(name: name, userId: userId);
+                          .addHabit(name: name, userId: userId, targetDays: days);
                       Navigator.of(context).pop();
                     },
                   ),

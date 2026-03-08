@@ -83,6 +83,28 @@ void main() {
       expect(habits.first.name, equals('매일 독서'));
     });
 
+    test('addHabit: targetDays를 포함해 저장', () async {
+      Habit? savedHabit;
+      when(() => mockRepo.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+      when(() => mockRepo.addHabit(any())).thenAnswer((invocation) async {
+        savedHabit = invocation.positionalArguments.first as Habit;
+        return savedHabit!;
+      });
+
+      final container = ProviderContainer(
+        overrides: [habitRepositoryProvider.overrideWithValue(mockRepo)],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(habitListNotifierProvider('uid-1').future);
+      await container.read(habitListNotifierProvider('uid-1').notifier)
+          .addHabit(name: '운동', userId: 'uid-1', targetDays: [1, 2, 3]);
+
+      expect(savedHabit, isNotNull);
+      expect(savedHabit!.targetDays, equals([1, 2, 3]));
+    });
+
     test('deleteHabit: 목록에서 습관 제거', () async {
       final habit = Habit(
         id: 'h-1', userId: 'uid-1', name: '운동',
