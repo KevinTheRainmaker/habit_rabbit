@@ -42,8 +42,28 @@ class HabitListScreen extends ConsumerStatefulWidget {
   ConsumerState<HabitListScreen> createState() => _HabitListScreenState();
 }
 
-class _HabitListScreenState extends ConsumerState<HabitListScreen> {
+class _HabitListScreenState extends ConsumerState<HabitListScreen>
+    with WidgetsBindingObserver {
   int _upsellCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.read(currentDateProvider.notifier).state = DateTime.now();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

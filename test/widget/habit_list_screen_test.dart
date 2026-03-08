@@ -23,6 +23,7 @@ import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
@@ -1114,6 +1115,54 @@ void main() {
 
       verify(() => mockMission.completeMission(missionId: 'mission-first-checkin'))
           .called(1);
+    });
+
+    // RED: currentDateProvider 변경 시 오늘 습관 목록 갱신
+    testWidgets('날짜가 변경되면 오늘 습관 목록이 갱신됨', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      // 월요일(0)에만 실행하는 습관
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-mon',
+              userId: 'uid-1',
+              name: '월요일 운동',
+              createdAt: DateTime(2026, 3, 9),
+              isActive: true,
+              targetDays: const [0], // 월요일만
+            ),
+          ]);
+
+      // 일요일로 시작 (weekday=7, 0-indexed=6) → 월요일 습관 미표시
+      final sunday = DateTime(2026, 3, 8); // 실제 일요일
+      final container = ProviderContainer(
+        overrides: [
+          habitRepositoryProvider.overrideWithValue(mockHabit),
+          authRepositoryProvider.overrideWithValue(mockAuth),
+          currentDateProvider.overrideWith((ref) => sunday),
+        ],
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 일요일에는 월요일 습관이 보이지 않음
+      expect(find.text('월요일 운동'), findsNothing);
+
+      // 월요일로 날짜 변경
+      final monday = DateTime(2026, 3, 9);
+      container.read(currentDateProvider.notifier).state = monday;
+      await tester.pumpAndSettle();
+
+      // 월요일에는 습관이 표시됨
+      expect(find.text('월요일 운동'), findsOneWidget);
     });
   });
 }
