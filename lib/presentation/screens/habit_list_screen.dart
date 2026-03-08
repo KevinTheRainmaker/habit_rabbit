@@ -17,6 +17,7 @@ import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/domain/usecases/streak_break_check_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/today_progress_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
@@ -235,8 +236,21 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
     final freeTrialUsed =
         ticketAsync.valueOrNull?.freeTrialUsed ?? false;
 
+    final progress = TodayProgressUseCase(
+      habits: widget.allHabits,
+      checkins: allCheckins,
+      today: today,
+    );
+
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            '오늘 ${progress.completed} / ${progress.total}',
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+        ),
         CompletionRateCard(
           rate: MonthlyCompletionRateUseCase()(
             checkins: allCheckins,

@@ -443,6 +443,37 @@ void main() {
       expect(find.byType(HabitDetailScreen), findsOneWidget);
     });
 
+    testWidgets('오늘 진행률 텍스트 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('0 / 1'), findsOneWidget);
+    });
+
     testWidgets('습관이 없으면 EmptyHabitState 표시', (tester) async {
       final mockHabit = MockHabitRepository();
       final mockAuth = MockAuthRepository();
