@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
+import 'package:habit_rabbit/domain/entities/shop_item.dart';
 import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/repositories/auth_repository.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
+import 'package:habit_rabbit/domain/repositories/shop_repository.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
+import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
@@ -23,6 +26,7 @@ import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
 class MockAuthRepository extends Mock implements AuthRepository {}
+class MockShopRepository extends Mock implements ShopRepository {}
 
 void main() {
   group('HabitListScreen', () {
@@ -998,6 +1002,64 @@ void main() {
 
       final expectedTotal = checkin1.carrotPoints + checkin2.carrotPoints;
       expect(find.textContaining('$expectedTotal'), findsWidgets);
+    });
+
+    testWidgets('구매한 아이템 가격만큼 당근 포인트 차감해서 잔액 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      final mockShop = MockShopRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      // 10 checkins = 100 carrot points earned
+      final checkins = List.generate(
+        10,
+        (i) => Checkin(
+          id: 'c-$i',
+          habitId: 'h-1',
+          userId: 'uid-1',
+          date: DateTime(2026, 3, i + 1),
+          streakDay: i,
+        ),
+      );
+      const ownedItem = ShopItem(
+        id: 'acc-1',
+        name: '당근 목걸이',
+        price: 80,
+        category: '액세서리',
+        isOwned: true,
+      );
+
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => checkins);
+      when(() => mockShop.getItems()).thenAnswer((_) async => [ownedItem]);
+      when(() => mockShop.getOwnedItems()).thenAnswer((_) async => [ownedItem]);
+      when(() => mockShop.getEquippedItems()).thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            shopRepositoryProvider.overrideWithValue(mockShop),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // earned = 100, spent = 80, balance = 20
+      final earned = checkins.fold(0, (s, c) => s + c.carrotPoints);
+      final balance = earned - ownedItem.price;
+      expect(find.textContaining('$balance'), findsWidgets);
     });
   });
 }

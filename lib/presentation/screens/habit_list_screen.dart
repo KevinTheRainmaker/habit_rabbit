@@ -28,7 +28,8 @@ import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 import 'package:habit_rabbit/domain/usecases/current_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
-import 'package:habit_rabbit/domain/usecases/total_carrot_points_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/carrot_balance_usecase.dart';
+import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
   const HabitListScreen({super.key});
@@ -239,9 +240,13 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
 
     if (!_pointsInitialized && allCheckins.isNotEmpty) {
       _pointsInitialized = true;
-      final total = TotalCarrotPointsUseCase(checkins: allCheckins).total;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(carrotPointsProvider.notifier).initialize(total);
+      final ownedItems = ref.read(shopRepositoryProvider).getOwnedItems();
+      ownedItems.then((items) {
+        final balance = CarrotBalanceUseCase(
+          checkins: allCheckins,
+          ownedItems: items,
+        ).balance;
+        ref.read(carrotPointsProvider.notifier).initialize(balance);
       });
     }
 
