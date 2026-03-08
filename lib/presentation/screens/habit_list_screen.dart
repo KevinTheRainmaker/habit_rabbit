@@ -26,6 +26,7 @@ import 'package:habit_rabbit/presentation/screens/streak_break_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
+import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -304,6 +305,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
   bool _checkedIn = false;
   int _earnedPoints = 0;
   int _streak = 0;
+  String? _milestoneMessage;
 
   Future<void> _onTap() async {
     if (_checkedIn) return;
@@ -316,10 +318,12 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         )).future,
       );
       ref.read(carrotPointsProvider.notifier).add(checkin.carrotPoints);
+      final streak = checkin.streakDay + 1;
       setState(() {
         _checkedIn = true;
         _earnedPoints = checkin.carrotPoints;
-        _streak = checkin.streakDay + 1;
+        _streak = streak;
+        _milestoneMessage = StreakMilestoneUseCase(streak: streak).message;
       });
     } catch (_) {
       // 이미 체크인한 경우 무시
@@ -361,7 +365,9 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
       child: ListTile(
         title: Text(widget.habit.name),
         subtitle: _checkedIn
-            ? Text('🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속')
+            ? Text(_milestoneMessage != null
+                ? '🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속\n$_milestoneMessage'
+                : '🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속')
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

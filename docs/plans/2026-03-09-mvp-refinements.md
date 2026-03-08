@@ -60,7 +60,7 @@ git commit -m "feat: add StreakMilestoneUseCase"
 
 ---
 
-## Task 122: 체크인 후 마일스톤 메시지 표시 (TDD)
+## Task 122: 체크인 후 마일스톤 메시지 표시 (TDD) ✅
 
 **Files:**
 

@@ -728,5 +728,48 @@ void main() {
 
       verifyNever(() => mockHabit.deleteHabit(habitId: any(named: 'habitId'), userId: any(named: 'userId')));
     });
+
+    testWidgets('체크인 후 5일 마일스톤이면 메시지 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.checkIn(
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: any(named: 'date'),
+          )).thenAnswer((_) async => Checkin(
+            id: 'c-1',
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: DateTime(2026, 3, 7),
+            streakDay: 4, // streakDay=4 → streak=5 (마일스톤)
+          ));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('매일 운동'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('불꽃이 타오르고 있어요'), findsOneWidget);
+    });
   });
 }
