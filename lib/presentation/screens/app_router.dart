@@ -39,6 +39,7 @@ class AppRouter extends ConsumerWidget {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (_) => HabitRecommendationScreen(
+                    answers: answers,
                     onStart: (habits) {
                       for (final name in habits) {
                         ref

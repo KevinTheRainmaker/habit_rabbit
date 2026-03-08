@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-
-const _recommendations = [
-  '매일 물 8잔 마시기',
-  '10분 스트레칭',
-  '하루 10분 독서',
-  '감사 일기 쓰기',
-  '30분 걷기',
-];
+import 'package:habit_rabbit/domain/usecases/habit_recommendation_usecase.dart';
 
 class HabitRecommendationScreen extends StatefulWidget {
   final void Function(List<String> selectedHabits) onStart;
+  final List<String> answers;
 
-  const HabitRecommendationScreen({super.key, required this.onStart});
+  const HabitRecommendationScreen({
+    super.key,
+    required this.onStart,
+    this.answers = const [],
+  });
 
   @override
   State<HabitRecommendationScreen> createState() =>
@@ -22,8 +20,13 @@ class _HabitRecommendationScreenState
     extends State<HabitRecommendationScreen> {
   final Set<String> _selected = {};
 
+  List<String> get _recommendations =>
+      HabitRecommendationUseCase(answers: widget.answers).recommendations;
+
   @override
   Widget build(BuildContext context) {
+    final recommendations = _recommendations;
+
     return Scaffold(
       appBar: AppBar(title: const Text('추천 습관')),
       body: Padding(
@@ -50,9 +53,9 @@ class _HabitRecommendationScreenState
             if (_selected.isNotEmpty) const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: _recommendations.length,
+                itemCount: recommendations.length,
                 itemBuilder: (context, index) {
-                  final habit = _recommendations[index];
+                  final habit = recommendations[index];
                   return CheckboxListTile(
                     title: Text(habit),
                     value: _selected.contains(habit),

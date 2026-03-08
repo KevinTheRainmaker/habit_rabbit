@@ -51,5 +51,18 @@ void main() {
 
       expect(find.text('오늘은 1개만 시작해요'), findsOneWidget);
     });
+
+    testWidgets('아침 루틴 답변 시 아침 관련 습관 추천 표시', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: HabitRecommendationScreen(
+            onStart: (_) {},
+            answers: const ['건강한 몸 만들기', '아침 (기상 후)', '처음이에요'],
+          ),
+        ),
+      );
+
+      expect(find.textContaining('스트레칭'), findsWidgets);
+    });
   });
 }
