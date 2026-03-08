@@ -28,7 +28,6 @@ import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 import 'package:habit_rabbit/domain/usecases/current_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
-import 'package:habit_rabbit/domain/usecases/best_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/carrot_balance_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/mission_check_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
