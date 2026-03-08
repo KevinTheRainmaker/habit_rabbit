@@ -14,7 +14,6 @@ import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
 import 'package:habit_rabbit/presentation/screens/habit_list_screen.dart';
-import 'package:habit_rabbit/domain/entities/shop_item.dart';
 import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart';
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
