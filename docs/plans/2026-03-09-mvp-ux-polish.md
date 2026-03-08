@@ -84,7 +84,7 @@ git commit -m "feat: wire up HabitReadinessCard onAdd to AddHabitDialog"
 
 ---
 
-## Task 128: 전체 테스트 통과 확인
+## Task 128: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test test/unit/ test/widget/
