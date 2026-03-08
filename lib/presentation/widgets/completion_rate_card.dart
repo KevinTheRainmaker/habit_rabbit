@@ -33,6 +33,10 @@ class CompletionRateCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(value: rate),
+                  if (rate >= 0.7) ...[
+                    const SizedBox(height: 8),
+                    const Text('잘하고 있어!'),
+                  ],
                 ],
               ),
       ),

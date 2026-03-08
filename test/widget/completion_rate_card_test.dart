@@ -39,5 +39,29 @@ void main() {
 
       expect(find.textContaining('오늘 첫 체크인'), findsOneWidget);
     });
+
+    testWidgets('달성률 70% 이상이면 긍정 메시지 표시', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CompletionRateCard(rate: 0.7),
+          ),
+        ),
+      );
+
+      expect(find.text('잘하고 있어!'), findsOneWidget);
+    });
+
+    testWidgets('달성률 70% 미만이면 긍정 메시지 미표시', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CompletionRateCard(rate: 0.69),
+          ),
+        ),
+      );
+
+      expect(find.text('잘하고 있어!'), findsNothing);
+    });
   });
 }
