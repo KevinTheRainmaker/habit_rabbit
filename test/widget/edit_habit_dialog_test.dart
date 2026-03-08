@@ -53,7 +53,7 @@ void main() {
           home: Scaffold(
             body: EditHabitDialog(
               habit: mondayOnlyHabit,
-              onSaved: (name, days) => savedDays = days,
+              onSaved: (name, days, icon) => savedDays = days,
             ),
           ),
         ),
@@ -65,6 +65,38 @@ void main() {
       await tester.pump();
 
       expect(savedDays, containsAll([0, 1]));
+    });
+
+    testWidgets('편집 다이얼로그에 아이콘 선택 버튼 표시', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: EditHabitDialog(habit: testHabit)),
+        ),
+      );
+
+      expect(find.text('🏃'), findsOneWidget);
+    });
+
+    testWidgets('아이콘 선택 후 저장 시 선택된 아이콘 전달', (tester) async {
+      String? savedIcon;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EditHabitDialog(
+              habit: testHabit,
+              onSaved: (name, days, icon) => savedIcon = icon,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('🏃'));
+      await tester.pump();
+      await tester.tap(find.text('저장'));
+      await tester.pump();
+
+      expect(savedIcon, '🏃');
     });
   });
 }

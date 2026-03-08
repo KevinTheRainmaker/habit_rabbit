@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
 
 const _dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+const _icons = ['🏃', '📚', '💧', '🧘', '🎯', '💪', '🍎', '😴', '✍️', '🎨'];
 
 class EditHabitDialog extends StatefulWidget {
   final Habit habit;
-  final void Function(String name, List<int> targetDays)? onSaved;
+  final void Function(String name, List<int> targetDays, String icon)? onSaved;
 
   const EditHabitDialog({super.key, required this.habit, this.onSaved});
 
@@ -17,12 +18,14 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
   late final TextEditingController _controller;
   String? _errorText;
   late final Set<int> _selectedDays;
+  late String _selectedIcon;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.habit.name);
     _selectedDays = Set<int>.from(widget.habit.targetDays);
+    _selectedIcon = widget.habit.icon;
   }
 
   @override
@@ -49,7 +52,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     }
     setState(() => _errorText = null);
     final days = _selectedDays.toList()..sort();
-    widget.onSaved?.call(name, days);
+    widget.onSaved?.call(name, days, _selectedIcon);
   }
 
   @override
@@ -99,6 +102,31 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                 ),
               );
             }),
+          ),
+          const SizedBox(height: 16),
+          const Text('아이콘', style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _icons.map((icon) {
+                final isSelected = _selectedIcon == icon;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedIcon = icon),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(icon, style: const TextStyle(fontSize: 24)),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
