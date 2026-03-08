@@ -32,7 +32,7 @@ git commit -m "feat: auto-detect mission completion in MissionScreen"
 
 ---
 
-## Task 130: StatisticsScreen 습관별 달성률 표시 (TDD)
+## Task 130: StatisticsScreen 습관별 달성률 표시 (TDD) ✅
 
 현재 StatisticsScreen은 전체 합산만 표시. 습관별 달성률 리스트 추가.
 

@@ -67,6 +67,27 @@ class StatisticsScreen extends ConsumerWidget {
                       label: '총 적립 당근',
                       value: '${allCheckins.fold(0, (sum, c) => sum + c.carrotPoints)}개',
                     ),
+                    const SizedBox(height: 20),
+                    const Text('습관별 달성률', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    ...habits.map((habit) {
+                      final habitCheckins = allCheckins.where((c) => c.habitId == habit.id).toList();
+                      final today = DateTime.now();
+                      final daysSinceCreation = today.difference(habit.createdAt).inDays + 1;
+                      final rate = daysSinceCreation > 0
+                          ? (habitCheckins.length / daysSinceCreation).clamp(0.0, 1.0)
+                          : 0.0;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Expanded(child: Text(habit.name)),
+                            Text('${(rate * 100).round()}%',
+                                style: const TextStyle(fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
