@@ -771,5 +771,47 @@ void main() {
 
       expect(find.textContaining('불꽃이 타오르고 있어요'), findsOneWidget);
     });
+
+    testWidgets('준비 제안 카드 추가하기 탭 시 AddHabitDialog 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final today = DateTime.now();
+      final habit = Habit(
+        id: 'h-1', userId: 'uid-1', name: '매일 운동',
+        createdAt: DateTime(2026, 3, 7), isActive: true,
+      );
+      // 7일치 체크인 → rate = 1.0 >= 0.8 → HabitReadinessCard 표시
+      final checkins = List.generate(
+        7,
+        (i) => Checkin(
+          id: 'c-$i', habitId: 'h-1', userId: 'uid-1',
+          date: today.subtract(Duration(days: i)),
+          streakDay: i,
+        ),
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => checkins);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('추가하기'), findsOneWidget);
+      await tester.tap(find.text('추가하기'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('새 습관 추가'), findsOneWidget);
+    });
   });
 }

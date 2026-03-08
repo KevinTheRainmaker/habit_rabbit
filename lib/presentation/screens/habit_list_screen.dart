@@ -261,7 +261,27 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
         if (showReadiness)
           HabitReadinessCard(
             weeklyCompletionRate: rate,
-            onAdd: () {},
+            onAdd: () {
+              final userId = widget.user.id;
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (_) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: AddHabitDialog(
+                    onSaved: (name) {
+                      ref
+                          .read(habitListNotifierProvider(userId).notifier)
+                          .addHabit(name: name, userId: userId);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              );
+              setState(() => _readinessDismissed = true);
+            },
             onDismiss: () => setState(() => _readinessDismissed = true),
           ),
         if (isStreakBroken)
