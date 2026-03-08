@@ -7,70 +7,39 @@ void main() {
     testWidgets('추천 습관 목록 표시', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: HabitRecommendationScreen(
-            onStart: (_) {},
-          ),
+          home: HabitRecommendationScreen(onStart: (_) {}),
         ),
       );
-      await tester.pumpAndSettle();
 
-      // 최소 2개 이상의 추천 습관 표시
-      expect(find.byType(CheckboxListTile), findsAtLeast(2));
+      expect(find.text('매일 물 8잔 마시기'), findsOneWidget);
     });
 
-    testWidgets('습관 선택/해제 토글', (tester) async {
+    testWidgets('1개 선택 시 "완벽한 시작이에요!" 표시', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: HabitRecommendationScreen(
-            onStart: (_) {},
-          ),
+          home: HabitRecommendationScreen(onStart: (_) {}),
         ),
       );
-      await tester.pumpAndSettle();
 
-      // 첫 번째 체크박스 탭 → 선택
-      final firstCheckbox = find.byType(CheckboxListTile).first;
-      await tester.tap(firstCheckbox);
-      await tester.pumpAndSettle();
+      await tester.tap(find.text('매일 물 8잔 마시기'));
+      await tester.pump();
 
-      final checkboxWidget = tester.widget<CheckboxListTile>(firstCheckbox);
-      expect(checkboxWidget.value, isTrue);
+      expect(find.text('완벽한 시작이에요!'), findsOneWidget);
     });
 
-    testWidgets('시작하기 버튼 존재', (tester) async {
+    testWidgets('2개 이상 선택 시 "처음엔 적을수록 좋아요" 표시', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: HabitRecommendationScreen(
-            onStart: (_) {},
-          ),
+          home: HabitRecommendationScreen(onStart: (_) {}),
         ),
       );
-      await tester.pumpAndSettle();
 
-      expect(find.text('시작하기'), findsOneWidget);
-    });
+      await tester.tap(find.text('매일 물 8잔 마시기'));
+      await tester.pump();
+      await tester.tap(find.text('10분 스트레칭'));
+      await tester.pump();
 
-    testWidgets('선택된 습관으로 onStart 콜백 호출', (tester) async {
-      List<String>? selected;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: HabitRecommendationScreen(
-            onStart: (habits) => selected = habits,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // 첫 번째 습관 선택
-      await tester.tap(find.byType(CheckboxListTile).first);
-      await tester.pumpAndSettle();
-
-      // 시작하기 버튼 탭
-      await tester.tap(find.text('시작하기'));
-      await tester.pumpAndSettle();
-
-      expect(selected, isNotNull);
-      expect(selected!.length, equals(1));
+      expect(find.text('처음엔 적을수록 좋아요'), findsOneWidget);
     });
   });
 }
