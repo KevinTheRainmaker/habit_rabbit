@@ -32,6 +32,11 @@ class _HabitRecommendationScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
+              '오늘은 1개만 시작해요',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
               '오늘부터 시작할 습관을 골라보세요',
               style: Theme.of(context).textTheme.titleMedium,
             ),

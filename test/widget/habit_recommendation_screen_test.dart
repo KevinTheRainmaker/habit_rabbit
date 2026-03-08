@@ -41,5 +41,15 @@ void main() {
 
       expect(find.text('처음엔 적을수록 좋아요'), findsOneWidget);
     });
+
+    testWidgets('"오늘은 1개만 시작해요" 강조 텍스트 표시', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: HabitRecommendationScreen(onStart: (_) {}),
+        ),
+      );
+
+      expect(find.text('오늘은 1개만 시작해요'), findsOneWidget);
+    });
   });
 }
