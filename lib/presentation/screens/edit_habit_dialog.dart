@@ -118,7 +118,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                     ),

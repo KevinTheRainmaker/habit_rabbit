@@ -25,7 +25,7 @@ class PremiumBlurOverlay extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Container(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(24),
                 child: Column(
