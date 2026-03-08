@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
 
-class PremiumGateScreen extends StatelessWidget {
+class PremiumGateScreen extends ConsumerWidget {
   const PremiumGateScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -29,11 +31,15 @@ class PremiumGateScreen extends StatelessWidget {
           _FeatureRow(free: '기본 아이템', premium: '프리미엄 아이템', label: '아이템'),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('🐰 프리미엄 토끼가 됐어요!')),
-              );
-              Navigator.of(context).pop();
+            onPressed: () async {
+              await ref.read(subscriptionRepositoryProvider).purchasePremium();
+              ref.invalidate(isPremiumProvider);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('🐰 프리미엄 토끼가 됐어요!')),
+                );
+                Navigator.of(context).pop();
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF6B35),
