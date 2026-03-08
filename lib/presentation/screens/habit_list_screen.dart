@@ -337,6 +337,24 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
+      confirmDismiss: (_) async {
+        return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            content: const Text('삭제하면 기록도 사라져요'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('삭제'),
+              ),
+            ],
+          ),
+        ) ?? false;
+      },
       onDismissed: (_) => ref
           .read(habitListNotifierProvider(widget.userId).notifier)
           .deleteHabit(habitId: widget.habit.id, userId: widget.userId),

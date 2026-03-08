@@ -151,6 +151,9 @@ void main() {
       await tester.drag(find.text('매일 운동'), const Offset(-500, 0));
       await tester.pumpAndSettle();
 
+      await tester.tap(find.text('삭제'));
+      await tester.pumpAndSettle();
+
       expect(find.text('매일 운동'), findsNothing);
     });
 
@@ -614,6 +617,116 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('+10 획득'), findsOneWidget);
+    });
+
+    testWidgets('습관 스와이프 삭제 시 확인 다이얼로그 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.text('매일 운동'), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('삭제하면 기록도 사라져요'), findsOneWidget);
+    });
+
+    testWidgets('삭제 확인 누르면 deleteHabit 호출', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+      when(() => mockHabit.deleteHabit(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async {});
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.text('매일 운동'), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('삭제'));
+      await tester.pumpAndSettle();
+
+      verify(() => mockHabit.deleteHabit(habitId: 'h-1', userId: 'uid-1')).called(1);
+    });
+
+    testWidgets('삭제 취소 누르면 deleteHabit 미호출', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.text('매일 운동'), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('취소'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => mockHabit.deleteHabit(habitId: any(named: 'habitId'), userId: any(named: 'userId')));
     });
   });
 }
