@@ -21,7 +21,7 @@ class HabitListNotifier extends FamilyAsyncNotifier<List<Habit>, String> {
     return repo.getHabits(userId: arg);
   }
 
-  Future<void> addHabit({required String name, required String userId, List<int>? targetDays}) async {
+  Future<void> addHabit({required String name, required String userId, List<int>? targetDays, String icon = ''}) async {
     final repo = ref.read(habitRepositoryProvider);
     final habit = Habit(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -30,6 +30,7 @@ class HabitListNotifier extends FamilyAsyncNotifier<List<Habit>, String> {
       createdAt: DateTime.now(),
       isActive: true,
       targetDays: targetDays ?? const [0, 1, 2, 3, 4, 5, 6],
+      icon: icon,
     );
     await repo.addHabit(habit);
     final current = state.valueOrNull ?? [];

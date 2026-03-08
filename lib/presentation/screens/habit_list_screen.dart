@@ -179,10 +179,10 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: AddHabitDialog(
-          onSaved: (name, days) {
+          onSaved: (name, days, icon) {
             ref
                 .read(habitListNotifierProvider(userId).notifier)
-                .addHabit(name: name, userId: userId, targetDays: days);
+                .addHabit(name: name, userId: userId, targetDays: days, icon: icon);
             Navigator.of(context).pop();
           },
         ),
@@ -285,10 +285,10 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
                   child: AddHabitDialog(
-                    onSaved: (name, days) {
+                    onSaved: (name, days, icon) {
                       ref
                           .read(habitListNotifierProvider(userId).notifier)
-                          .addHabit(name: name, userId: userId, targetDays: days);
+                          .addHabit(name: name, userId: userId, targetDays: days, icon: icon);
                       Navigator.of(context).pop();
                     },
                   ),

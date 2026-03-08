@@ -53,7 +53,7 @@ void main() {
           child: MaterialApp(
             home: Scaffold(
               body: AddHabitDialog(
-                onSaved: (name, days) {
+                onSaved: (name, days, icon) {
                   savedName = name;
                   savedDays = days;
                 },
@@ -69,6 +69,45 @@ void main() {
 
       expect(savedName, equals('매일 운동'));
       expect(savedDays, isNotNull);
+    });
+
+    testWidgets('아이콘 선택 버튼 표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(body: AddHabitDialog()),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('🏃'), findsOneWidget);
+    });
+
+    testWidgets('아이콘 선택 시 선택된 아이콘 업데이트', (tester) async {
+      String? savedIcon;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: AddHabitDialog(
+                onSaved: (name, days, icon) {
+                  savedIcon = icon;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('🏃'));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField), '운동');
+      await tester.tap(find.text('저장'));
+      await tester.pump();
+
+      expect(savedIcon, equals('🏃'));
     });
 
     testWidgets('요일 선택 버튼 표시', (tester) async {
@@ -93,7 +132,7 @@ void main() {
           child: MaterialApp(
             home: Scaffold(
               body: AddHabitDialog(
-                onSaved: (name, days) => savedDays = days,
+                onSaved: (name, days, icon) => savedDays = days,
               ),
             ),
           ),

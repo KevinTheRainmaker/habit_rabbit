@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 const _dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+const _icons = ['🏃', '📚', '💧', '🧘', '🎯', '💪', '🍎', '😴', '✍️', '🎨'];
 
 class AddHabitDialog extends StatefulWidget {
-  final void Function(String name, List<int> targetDays)? onSaved;
+  final void Function(String name, List<int> targetDays, String icon)? onSaved;
 
   const AddHabitDialog({super.key, this.onSaved});
 
@@ -16,6 +17,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   String? _errorText;
   // 0=월 ~ 6=일, 기본: 전체 선택
   final Set<int> _selectedDays = {0, 1, 2, 3, 4, 5, 6};
+  String _selectedIcon = '';
 
   @override
   void dispose() {
@@ -41,7 +43,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     }
     setState(() => _errorText = null);
     final days = _selectedDays.toList()..sort();
-    widget.onSaved?.call(name, days);
+    widget.onSaved?.call(name, days, _selectedIcon);
   }
 
   @override
@@ -65,6 +67,34 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
               border: const OutlineInputBorder(),
             ),
             autofocus: true,
+          ),
+          const SizedBox(height: 12),
+          const Text('아이콘 선택', style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _icons.map((icon) {
+                final selected = _selectedIcon == icon;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedIcon = icon),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: selected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(icon, style: const TextStyle(fontSize: 20)),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 16),
           const Text('반복 요일', style: TextStyle(fontWeight: FontWeight.w500)),
