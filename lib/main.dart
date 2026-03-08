@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:habit_rabbit/data/repositories/hive_auth_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_mission_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_recovery_repository.dart';
@@ -23,6 +24,7 @@ void main() async {
   final recoveryBox = await Hive.openBox('recovery');
   final missionBox = await Hive.openBox('missions');
   final subscriptionBox = await Hive.openBox('subscription');
+  final authBox = await Hive.openBox('auth');
   runApp(ProviderScope(
     overrides: [
       habitRepositoryProvider.overrideWithValue(HiveHabitRepository(habitBox)),
@@ -30,6 +32,7 @@ void main() async {
       recoveryRepositoryProvider.overrideWithValue(HiveRecoveryRepository(recoveryBox)),
       missionRepositoryProvider.overrideWithValue(HiveMissionRepository(missionBox)),
       subscriptionRepositoryProvider.overrideWithValue(HiveSubscriptionRepository(subscriptionBox)),
+      authRepositoryProvider.overrideWithValue(HiveAuthRepository(authBox)),
     ],
     child: const HabitRabbitApp(),
   ));
