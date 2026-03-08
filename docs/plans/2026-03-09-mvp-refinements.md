@@ -31,7 +31,7 @@ git commit -m "feat: add delete confirmation dialog"
 
 ---
 
-## Task 121: StreakMilestoneUseCase (TDD)
+## Task 121: StreakMilestoneUseCase (TDD) ✅
 
 Story 5 AC: 5, 10, 30, 100일 달성 시 마일스톤 메시지 반환.
 
