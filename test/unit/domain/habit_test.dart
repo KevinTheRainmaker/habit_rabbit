@@ -46,6 +46,31 @@ void main() {
       expect(habit.targetDays, equals([0, 1, 2, 3, 4, 5, 6]));
     });
 
+    test('icon 필드 기본값은 빈 문자열', () {
+      final habit = Habit(
+        id: 'habit-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+
+      expect(habit.icon, equals(''));
+    });
+
+    test('icon 포함 Habit 생성', () {
+      final habit = Habit(
+        id: 'habit-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+        icon: '🏃',
+      );
+
+      expect(habit.icon, equals('🏃'));
+    });
+
     test('특정 요일만 설정 가능 (월,수,금 = 0,2,4)', () {
       final habit = Habit(
         id: 'habit-1',

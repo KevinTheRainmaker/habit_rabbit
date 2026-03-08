@@ -9,6 +9,7 @@ class Habit extends Equatable {
   final DateTime createdAt;
   final bool isActive;
   final List<int> targetDays;
+  final String icon;
 
   const Habit({
     required this.id,
@@ -17,6 +18,7 @@ class Habit extends Equatable {
     required this.createdAt,
     required this.isActive,
     this.targetDays = _allDays,
+    this.icon = '',
   });
 
   Habit copyWith({
@@ -26,6 +28,7 @@ class Habit extends Equatable {
     DateTime? createdAt,
     bool? isActive,
     List<int>? targetDays,
+    String? icon,
   }) => Habit(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -33,6 +36,7 @@ class Habit extends Equatable {
     createdAt: createdAt ?? this.createdAt,
     isActive: isActive ?? this.isActive,
     targetDays: targetDays ?? this.targetDays,
+    icon: icon ?? this.icon,
   );
 
   @override
