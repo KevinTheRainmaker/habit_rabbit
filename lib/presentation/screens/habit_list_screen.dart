@@ -32,6 +32,7 @@ import 'package:habit_rabbit/domain/usecases/carrot_balance_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/mission_check_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
+import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
   const HabitListScreen({super.key});
@@ -160,7 +161,7 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen> {
 
   void _showAddHabitDialog(BuildContext context, User user) {
     final userId = user.id;
-    final isPremium = user.isPremium;
+    final isPremium = ref.read(isPremiumProvider).valueOrNull ?? user.isPremium;
 
     if (!isPremium) {
       final habits = ref.read(habitListNotifierProvider(userId)).valueOrNull ?? [];
