@@ -36,7 +36,8 @@
 - `docs/plans/2026-03-09-mvp-wiring.md` — MVP 와이어링 (Task 112~115) ✅ 완료
 - `docs/plans/2026-03-09-mvp-progress.md` — MVP 진행률 (Task 116~119) ✅ 완료
 - `docs/plans/2026-03-09-mvp-refinements.md` — MVP 개선 (Task 120~124) ✅ 완료
-- `docs/plans/2026-03-09-mvp-ux-polish.md` — MVP UX 폴리시 (Task 125~128) ← 현재
+- `docs/plans/2026-03-09-mvp-ux-polish.md` — MVP UX 폴리시 (Task 125~128) ✅ 완료
+- `docs/plans/2026-03-09-mvp-mission-stats.md` — 미션 & 통계 (Task 129~132) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -52,7 +53,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-09-mvp-ux-polish.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-09-mvp-mission-stats.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -112,7 +113,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-09-mvp-ux-polish.md`의 Task 125~128이 모두 완료되면:
+`docs/plans/2026-03-09-mvp-mission-stats.md`의 Task 129~132이 모두 완료되면:
 
 1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 
