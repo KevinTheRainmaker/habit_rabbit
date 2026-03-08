@@ -54,7 +54,8 @@
 - `docs/plans/2026-03-09-mvp-deactivation-reco.md` — 구독 만료 비활성화 & 맞춤 추천 (Task 176~178) ✅ 완료
 - `docs/plans/2026-03-09-mvp-failure-pattern.md` — 실패 패턴 분석 (Task 179~181) ✅ 완료
 - `docs/plans/2026-03-09-mvp-cleanup.md` — MVP 클린업 (Task 182~184) ✅ 완료
-- `docs/plans/2026-03-09-mvp-analyze-clean.md` — 분석 경고 제거 (Task 185~187) ← 현재
+- `docs/plans/2026-03-09-mvp-analyze-clean.md` — 분석 경고 제거 (Task 185~187) ✅ 완료
+- `docs/plans/2026-03-09-mvp-carrot-persistence.md` — 당근 포인트 영속성 (Task 188~190) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -70,7 +71,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-09-mvp-analyze-clean.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-09-mvp-carrot-persistence.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -130,7 +131,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-09-mvp-analyze-clean.md`의 Task 185~187이 모두 완료되면:
+`docs/plans/2026-03-09-mvp-carrot-persistence.md`의 Task 188~190이 모두 완료되면:
 
 1. `flutter test` 전체 통과 확인
 2. `flutter analyze --no-fatal-infos` 에러 0건 확인
