@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/usecases/best_streak_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/failure_pattern_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/weekly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
@@ -32,6 +33,8 @@ class StatisticsScreen extends ConsumerWidget {
             );
             return asyncCheckins.valueOrNull ?? const <Checkin>[];
           }).cast<Checkin>().toList();
+
+          final today = DateTime.now();
 
           return Column(
             children: [
@@ -93,7 +96,6 @@ class StatisticsScreen extends ConsumerWidget {
                           const SizedBox(height: 8),
                           ...habits.map((habit) {
                             final habitCheckins = allCheckins.where((c) => c.habitId == habit.id).toList();
-                            final today = DateTime.now();
                             final daysSinceCreation = today.difference(habit.createdAt).inDays + 1;
                             final rate = daysSinceCreation > 0
                                 ? (habitCheckins.length / daysSinceCreation).clamp(0.0, 1.0)
@@ -114,6 +116,11 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                     ),
                     if (isPremium) ...[
+                      const SizedBox(height: 20),
+                      _FailurePatternSection(
+                        checkins: allCheckins.map((c) => c.date).toList(),
+                        today: today,
+                      ),
                       const SizedBox(height: 20),
                       const Text('요일별 달성 패턴', style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
@@ -141,6 +148,37 @@ class StatisticsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('$e')),
       ),
+    );
+  }
+}
+
+class _FailurePatternSection extends StatelessWidget {
+  final List<DateTime> checkins;
+  final DateTime today;
+
+  const _FailurePatternSection({required this.checkins, required this.today});
+
+  @override
+  Widget build(BuildContext context) {
+    final useCase = FailurePatternUseCase(checkins: checkins, today: today);
+
+    if (!useCase.isReady) {
+      return const Text(
+        '분석 준비 중이에요 — 2주 후 공개',
+        style: TextStyle(color: Colors.grey),
+      );
+    }
+
+    final worstDay = useCase.worstDayName;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('실패 패턴 분석', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        if (worstDay != null)
+          Text('$worstDay요일에 체크인이 가장 적어요',
+              style: const TextStyle(color: Colors.orange)),
+      ],
     );
   }
 }

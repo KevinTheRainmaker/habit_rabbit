@@ -380,5 +380,39 @@ void main() {
       expect(find.textContaining('최장 스트릭'), findsOneWidget);
       expect(find.textContaining('3일'), findsOneWidget);
     });
+
+    testWidgets('유료 사용자 2주 미만 데이터면 "분석 준비 중" 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [
+                Checkin(id: 'c-1', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 7), streakDay: 0),
+              ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(
+        find.textContaining('분석 준비 중'),
+        500,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.textContaining('분석 준비 중'), findsOneWidget);
+    });
   });
 }
