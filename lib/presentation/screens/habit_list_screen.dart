@@ -16,8 +16,12 @@ import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
 import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart';
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
+import 'package:habit_rabbit/domain/usecases/streak_break_check_usecase.dart';
+import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
+import 'package:habit_rabbit/presentation/screens/streak_break_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
+import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -61,6 +65,12 @@ class HabitListScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
+            icon: const Icon(Icons.emoji_events_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MissionScreen()),
+            ),
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -85,18 +95,10 @@ class HabitListScreen extends ConsumerWidget {
               if (habits.isEmpty) {
                 return const Center(child: Text('습관을 추가해보세요!'));
               }
-              return Column(
-                children: [
-                  _CompletionSummary(habits: allHabits, userId: user.id),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: habits.length,
-                      itemBuilder: (context, index) {
-                        return _HabitTile(habit: habits[index], user: user);
-                      },
-                    ),
-                  ),
-                ],
+              return _HabitListBody(
+                habits: habits,
+                allHabits: allHabits,
+                user: user,
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -110,7 +112,7 @@ class HabitListScreen extends ConsumerWidget {
         data: (user) => user == null
             ? null
             : FloatingActionButton(
-                onPressed: () => _showAddHabitDialog(context, ref, user!),
+                onPressed: () => _showAddHabitDialog(context, ref, user),
                 child: const Icon(Icons.add),
               ),
       ),
@@ -149,6 +151,95 @@ class HabitListScreen extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _HabitListBody extends ConsumerStatefulWidget {
+  final List<Habit> habits;
+  final List<Habit> allHabits;
+  final User user;
+
+  const _HabitListBody({
+    required this.habits,
+    required this.allHabits,
+    required this.user,
+  });
+
+  @override
+  ConsumerState<_HabitListBody> createState() => _HabitListBodyState();
+}
+
+class _HabitListBodyState extends ConsumerState<_HabitListBody> {
+  bool _readinessDismissed = false;
+  bool _streakBreakDismissed = false;
+
+  double _weeklyRate(List<Checkin> checkins) {
+    final today = DateTime.now();
+    int completed = 0;
+    for (int i = 0; i < 7; i++) {
+      final day = today.subtract(Duration(days: i));
+      if (checkins.any((c) =>
+          c.date.year == day.year &&
+          c.date.month == day.month &&
+          c.date.day == day.day)) {
+        completed++;
+      }
+    }
+    return completed / 7;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final allCheckins = widget.allHabits.expand((habit) {
+      final asyncCheckins = ref.watch(
+        checkinsListProvider((habitId: habit.id, userId: widget.user.id)),
+      );
+      return asyncCheckins.valueOrNull ?? const <Checkin>[];
+    }).cast<Checkin>().toList();
+
+    final today = DateTime.now();
+    final rate = _weeklyRate(allCheckins);
+    final showReadiness =
+        !_readinessDismissed && rate >= 0.8 && widget.allHabits.length < 3;
+
+    final isStreakBroken = !_streakBreakDismissed &&
+        StreakBreakCheckUseCase(
+          checkins: allCheckins.map((c) => c.date).toList(),
+          today: today,
+        ).isStreakBroken;
+
+    return Column(
+      children: [
+        CompletionRateCard(
+          rate: MonthlyCompletionRateUseCase()(
+            checkins: allCheckins,
+            today: today,
+          ),
+        ),
+        if (showReadiness)
+          HabitReadinessCard(
+            weeklyCompletionRate: rate,
+            onAdd: () {},
+            onDismiss: () => setState(() => _readinessDismissed = true),
+          ),
+        if (isStreakBroken)
+          StreakBreakDialog(
+            freeTrialUsed: false,
+            onUseFreeRecovery: () =>
+                setState(() => _streakBreakDismissed = true),
+            onRestart: () => setState(() => _streakBreakDismissed = true),
+          ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.habits.length,
+            itemBuilder: (context, index) {
+              return _HabitTile(
+                  habit: widget.habits[index], user: widget.user);
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -260,26 +351,3 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
   }
 }
 
-class _CompletionSummary extends ConsumerWidget {
-  final List<Habit> habits;
-  final String userId;
-
-  const _CompletionSummary({required this.habits, required this.userId});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final allCheckins = habits.expand((habit) {
-      final asyncCheckins = ref.watch(
-        checkinsListProvider((habitId: habit.id, userId: userId)),
-      );
-      return asyncCheckins.valueOrNull ?? const [];
-    }).cast<Checkin>().toList();
-
-    final rate = MonthlyCompletionRateUseCase()(
-      checkins: allCheckins,
-      today: DateTime.now(),
-    );
-
-    return CompletionRateCard(rate: rate);
-  }
-}

@@ -15,6 +15,7 @@ import 'package:habit_rabbit/domain/entities/shop_item.dart';
 import 'package:habit_rabbit/presentation/providers/equipped_items_provider.dart';
 import 'package:habit_rabbit/presentation/screens/notification_settings_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
+import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
@@ -438,6 +439,31 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(HabitDetailScreen), findsOneWidget);
+    });
+
+    testWidgets('미션 아이콘 탭 시 MissionScreen으로 이동', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.emoji_events_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MissionScreen), findsOneWidget);
     });
 
     testWidgets('습관 타일 탭 시 당근 포인트 표시', (tester) async {
