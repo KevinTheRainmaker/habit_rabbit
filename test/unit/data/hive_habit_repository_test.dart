@@ -89,6 +89,40 @@ void main() {
       expect(checkin.habitId, equals('h-1'));
     });
 
+    test('addHabit: targetDays와 icon이 저장 후 복원됨', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-2',
+        userId: 'uid-1',
+        name: '독서',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+        targetDays: [0, 2, 4],
+        icon: '📚',
+      );
+      await repo.addHabit(habit);
+      final habits = await repo.getHabits(userId: 'uid-1');
+      expect(habits.first.targetDays, equals([0, 2, 4]));
+      expect(habits.first.icon, equals('📚'));
+    });
+
+    test('updateHabit: 변경된 targetDays와 icon이 저장됨', () async {
+      final repo = HiveHabitRepository(box);
+      final habit = Habit(
+        id: 'h-3',
+        userId: 'uid-1',
+        name: '명상',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      await repo.addHabit(habit);
+      final updated = habit.copyWith(targetDays: [1, 3, 5], icon: '🧘');
+      await repo.updateHabit(updated);
+      final habits = await repo.getHabits(userId: 'uid-1');
+      expect(habits.first.targetDays, equals([1, 3, 5]));
+      expect(habits.first.icon, equals('🧘'));
+    });
+
     test('checkIn: 같은 날 중복 체크인 시 예외 발생', () async {
       final repo = HiveHabitRepository(box);
       await repo.checkIn(

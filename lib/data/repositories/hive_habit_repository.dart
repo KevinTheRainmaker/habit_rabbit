@@ -21,6 +21,8 @@ class HiveHabitRepository implements HabitRepository {
         name: map['name'] as String,
         createdAt: DateTime.parse(map['createdAt'] as String),
         isActive: map['isActive'] as bool,
+        targetDays: (map['targetDays'] as List?)?.cast<int>() ?? [0, 1, 2, 3, 4, 5, 6],
+        icon: map['icon'] as String? ?? '',
       );
 
   Map<String, dynamic> _habitToMap(Habit habit) => {
@@ -30,6 +32,8 @@ class HiveHabitRepository implements HabitRepository {
         'name': habit.name,
         'createdAt': habit.createdAt.toIso8601String(),
         'isActive': habit.isActive,
+        'targetDays': habit.targetDays,
+        'icon': habit.icon,
       };
 
   Checkin _checkinFromMap(Map map) => Checkin(
