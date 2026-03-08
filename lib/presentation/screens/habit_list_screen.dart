@@ -99,11 +99,16 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const NotificationSettingsScreen(),
-              ),
-            ),
+            onPressed: () {
+              final currentUser = ref.read(currentUserProvider).valueOrNull;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => NotificationSettingsScreen(
+                    isPremium: currentUser?.isPremium ?? false,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
