@@ -30,7 +30,9 @@ class PremiumGateScreen extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // TODO: 구독 플로우 연결
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('🐰 프리미엄 토끼가 됐어요!')),
+              );
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
@@ -43,6 +45,15 @@ class PremiumGateScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('나중에'),
+          ),
+          TextButton(
+            onPressed: () {
+              // TODO: RevenueCat 구독 복원 연결
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('구독 복원 중...')),
+              );
+            },
+            child: const Text('구독 복원하기'),
           ),
         ],
       ),

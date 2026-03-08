@@ -65,5 +65,33 @@ void main() {
 
       expect(find.textContaining('나중에'), findsOneWidget);
     });
+
+    testWidgets('구독 복원 버튼 표시', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: SingleChildScrollView(child: PremiumGateScreen())),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('구독 복원'), findsOneWidget);
+    });
+
+    testWidgets('업그레이드 탭 시 프리미엄 토끼 축하 메시지 표시', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(child: PremiumGateScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.textContaining('업그레이드하기'));
+      await tester.pump();  // first frame: snackbar starts appearing
+      await tester.pump(const Duration(milliseconds: 300));  // animation completes
+
+      expect(find.textContaining('프리미엄 토끼가 됐어요'), findsOneWidget);
+    });
   });
 }
