@@ -49,7 +49,8 @@
 - `docs/plans/2026-03-09-mvp-premium-notifications.md` — 알림 isPremium 연결 + 요일별 알림 UI + 심화통계 (Task 158~161) ✅ 완료
 - `docs/plans/2026-03-09-mvp-icon-restore.md` — 습관 아이콘 + 구독 복원 (Task 162~165) ✅ 완료
 - `docs/plans/2026-03-09-mvp-icon-display.md` — 아이콘 표시 + 편집 (Task 166~168) ✅ 완료
-- `docs/plans/2026-03-09-mvp-onboarding-recommend.md` — 온보딩 추천 & 통계 개선 (Task 169~172) ← 현재
+- `docs/plans/2026-03-09-mvp-onboarding-recommend.md` — 온보딩 추천 & 통계 개선 (Task 169~172) ✅ 완료
+- `docs/plans/2026-03-09-mvp-login-streak.md` — 로그인 연결 & 현재 스트릭 (Task 173~175) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -65,7 +66,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-09-mvp-onboarding-recommend.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-09-mvp-login-streak.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -125,7 +126,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-09-mvp-onboarding-recommend.md`의 Task 169~172이 모두 완료되면:
+`docs/plans/2026-03-09-mvp-login-streak.md`의 Task 173~175이 모두 완료되면:
 
 1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 
