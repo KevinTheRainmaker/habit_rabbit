@@ -99,10 +99,10 @@ void main() {
 
       await container.read(habitListNotifierProvider('uid-1').future);
       await container.read(habitListNotifierProvider('uid-1').notifier)
-          .addHabit(name: '운동', userId: 'uid-1', targetDays: [1, 2, 3]);
+          .addHabit(name: '운동', userId: 'uid-1', targetDays: [0, 1, 2]);
 
       expect(savedHabit, isNotNull);
-      expect(savedHabit!.targetDays, equals([1, 2, 3]));
+      expect(savedHabit!.targetDays, equals([0, 1, 2]));
     });
 
     test('deleteHabit: 목록에서 습관 제거', () async {

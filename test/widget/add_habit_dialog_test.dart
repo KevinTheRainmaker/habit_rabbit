@@ -114,7 +114,7 @@ void main() {
       await tester.tap(find.text('저장'));
       await tester.pump();
 
-      expect(savedDays, contains(1)); // 1 = 월요일
+      expect(savedDays, contains(0)); // 0 = 월요일 (0-based index)
     });
   });
 }

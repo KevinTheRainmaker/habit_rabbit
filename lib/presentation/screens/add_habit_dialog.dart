@@ -14,8 +14,8 @@ class AddHabitDialog extends StatefulWidget {
 class _AddHabitDialogState extends State<AddHabitDialog> {
   final _controller = TextEditingController();
   String? _errorText;
-  // 1=월 ~ 7=일, 기본: 전체 선택
-  final Set<int> _selectedDays = {1, 2, 3, 4, 5, 6, 7};
+  // 0=월 ~ 6=일, 기본: 전체 선택
+  final Set<int> _selectedDays = {0, 1, 2, 3, 4, 5, 6};
 
   @override
   void dispose() {
@@ -72,7 +72,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(_dayLabels.length, (i) {
-              final day = i + 1;
+              final day = i;
               final selected = _selectedDays.contains(day);
               return GestureDetector(
                 onTap: () => _toggleDay(day),

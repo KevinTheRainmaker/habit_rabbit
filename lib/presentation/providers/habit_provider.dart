@@ -29,7 +29,7 @@ class HabitListNotifier extends FamilyAsyncNotifier<List<Habit>, String> {
       name: name,
       createdAt: DateTime.now(),
       isActive: true,
-      targetDays: targetDays ?? const [1, 2, 3, 4, 5, 6, 7],
+      targetDays: targetDays ?? const [0, 1, 2, 3, 4, 5, 6],
     );
     await repo.addHabit(habit);
     final current = state.valueOrNull ?? [];
