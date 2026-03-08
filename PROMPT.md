@@ -42,7 +42,8 @@
 - `docs/plans/2026-03-09-mvp-targetdays-wiring.md` — targetDays 연결 (Task 136~138) ✅ 완료
 - `docs/plans/2026-03-09-mvp-edit-habit-gate.md` — 편집 요일 + 게이트 (Task 139~141) ✅ 완료
 - `docs/plans/2026-03-09-mvp-onboarding-polish.md` — 온보딩 폴리시 (Task 142~144) ✅ 완료
-- `docs/plans/2026-03-09-mvp-stats-upsell.md` — 통계 빈 데이터 + 업셀 스팸방지 (Task 145~147) ← 현재
+- `docs/plans/2026-03-09-mvp-stats-upsell.md` — 통계 빈 데이터 + 업셀 스팸방지 (Task 145~147) ✅ 완료
+- `docs/plans/2026-03-09-mvp-readiness-expire.md` — 준비 카드 억제 + 만료 배너 (Task 148~150) ← 현재
 - `docs/adr-tech-stack.md` — 확정된 기술 스택
 - `CLAUDE.md` — 프로젝트 컨텍스트 및 제품 원칙
 - `docs/backlog.md` — 전체 유저 스토리
@@ -58,7 +59,7 @@ flutter test test/unit/ 2>&1 | tail -5
 
 ### Step 2: 다음 태스크 선택
 
-`docs/plans/2026-03-09-mvp-stats-upsell.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
+`docs/plans/2026-03-09-mvp-readiness-expire.md`에서 **가장 낮은 번호의 미완료 Task**를 찾아라.
 모든 Task가 완료되었으면 → 아래 "완료 조건" 참조.
 
 ### Step 3: TDD 사이클 실행
@@ -118,7 +119,7 @@ flutter test
 
 ## 완료 조건
 
-`docs/plans/2026-03-09-mvp-stats-upsell.md`의 Task 145~147이 모두 완료되면:
+`docs/plans/2026-03-09-mvp-readiness-expire.md`의 Task 148~150이 모두 완료되면:
 
 1. `flutter test test/unit/ test/widget/` 전체 통과 확인
 
