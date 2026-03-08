@@ -427,10 +427,10 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         ),
         child: EditHabitDialog(
           habit: widget.habit,
-          onSaved: (name) {
+          onSaved: (name, days) {
             ref
                 .read(habitListNotifierProvider(widget.userId).notifier)
-                .updateHabit(widget.habit.copyWith(name: name));
+                .updateHabit(widget.habit.copyWith(name: name, targetDays: days));
             Navigator.of(context).pop();
           },
         ),

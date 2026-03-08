@@ -1,81 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/presentation/screens/edit_habit_dialog.dart';
 
 void main() {
-  final habit = Habit(
+  final testHabit = Habit(
     id: 'h-1',
     userId: 'uid-1',
-    name: '매일 운동',
+    name: '운동',
     createdAt: DateTime(2026, 3, 7),
     isActive: true,
+    targetDays: const [0, 1, 2, 3, 4, 5, 6],
   );
 
   group('EditHabitDialog', () {
-    testWidgets('기존 이름 미리 채워짐', (tester) async {
+    testWidgets('이름 필드에 기존 습관명 표시', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(body: EditHabitDialog(habit: habit)),
-          ),
+        MaterialApp(
+          home: Scaffold(body: EditHabitDialog(habit: testHabit)),
         ),
       );
 
-      expect(find.widgetWithText(TextField, '매일 운동'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '운동'), findsOneWidget);
     });
 
-    testWidgets('저장 버튼 존재', (tester) async {
+    testWidgets('편집 다이얼로그에 요일 선택 버튼 표시', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(body: EditHabitDialog(habit: habit)),
-          ),
+        MaterialApp(
+          home: Scaffold(body: EditHabitDialog(habit: testHabit)),
         ),
       );
 
-      expect(find.text('저장'), findsOneWidget);
+      expect(find.text('월'), findsOneWidget);
+      expect(find.text('화'), findsOneWidget);
+      expect(find.text('수'), findsOneWidget);
     });
 
-    testWidgets('빈 이름 저장 시 유효성 오류 표시', (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(body: EditHabitDialog(habit: habit)),
-          ),
-        ),
+    testWidgets('요일 수정 후 저장 시 업데이트된 targetDays 전달', (tester) async {
+      List<int>? savedDays;
+
+      final mondayOnlyHabit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+        targetDays: const [0],
       );
 
-      await tester.enterText(find.byType(TextField), '');
-      await tester.tap(find.text('저장'));
-      await tester.pump();
-
-      expect(find.text('습관 이름을 입력해주세요'), findsOneWidget);
-    });
-
-    testWidgets('이름 수정 후 저장 시 콜백 호출', (tester) async {
-      String? savedName;
-
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: EditHabitDialog(
-                habit: habit,
-                onSaved: (name) => savedName = name,
-              ),
+        MaterialApp(
+          home: Scaffold(
+            body: EditHabitDialog(
+              habit: mondayOnlyHabit,
+              onSaved: (name, days) => savedDays = days,
             ),
           ),
         ),
       );
 
-      await tester.enterText(find.byType(TextField), '');
-      await tester.enterText(find.byType(TextField), '매일 독서');
+      await tester.tap(find.text('화'));
+      await tester.pump();
       await tester.tap(find.text('저장'));
       await tester.pump();
 
-      expect(savedName, equals('매일 독서'));
+      expect(savedDays, containsAll([0, 1]));
     });
   });
 }
