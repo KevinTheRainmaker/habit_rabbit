@@ -57,7 +57,7 @@ git commit -m "feat: show per-habit completion rate in StatisticsScreen"
 
 ---
 
-## Task 131: 알림 설정 저장 메시지 표시 (TDD)
+## Task 131: 알림 설정 저장 메시지 표시 (TDD) ✅
 
 알림 설정 변경 후 "저장되었습니다" SnackBar 표시.
 

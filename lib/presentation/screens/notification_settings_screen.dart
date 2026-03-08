@@ -19,6 +19,9 @@ class NotificationSettingsScreen extends ConsumerWidget {
             onChanged: (value) {
               ref.read(notificationSettingsProvider.notifier).state =
                   settings.copyWith(isEnabled: value);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('저장되었습니다')),
+              );
             },
           ),
           ListTile(
