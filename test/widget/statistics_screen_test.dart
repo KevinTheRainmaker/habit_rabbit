@@ -287,6 +287,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(
+        find.textContaining('구독하면 이런 인사이트를'),
+        500,
+        scrollable: find.byType(Scrollable).first,
+      );
+
       expect(find.byType(PremiumBlurOverlay), findsOneWidget);
       expect(find.textContaining('구독하면 이런 인사이트를'), findsOneWidget);
     });
@@ -335,8 +341,44 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(
+        find.textContaining('매일 운동'),
+        500,
+        scrollable: find.byType(Scrollable).first,
+      );
+
       expect(find.textContaining('매일 운동'), findsOneWidget);
       expect(find.textContaining('독서'), findsOneWidget);
+    });
+
+    testWidgets('최장 스트릭 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [
+                Checkin(id: 'c-1', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 1), streakDay: 0),
+                Checkin(id: 'c-2', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 2), streakDay: 1),
+                Checkin(id: 'c-3', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 3), streakDay: 2),
+              ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(home: StatisticsScreen(userId: 'uid-1')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('최장 스트릭'), findsOneWidget);
+      expect(find.textContaining('3일'), findsOneWidget);
     });
   });
 }

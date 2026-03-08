@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
+import 'package:habit_rabbit/domain/usecases/best_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/weekly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
@@ -67,6 +68,11 @@ class StatisticsScreen extends ConsumerWidget {
                     _StatCard(
                       label: '총 적립 당근',
                       value: '${allCheckins.fold(0, (sum, c) => sum + c.carrotPoints)}개',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      label: '최장 스트릭',
+                      value: '${BestStreakUseCase(checkins: allCheckins.map((c) => c.date).toList()).bestStreak}일',
                     ),
                     if (habits.isEmpty)
                       const Padding(
