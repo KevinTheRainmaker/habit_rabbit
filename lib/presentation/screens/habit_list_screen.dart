@@ -28,6 +28,7 @@ import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 import 'package:habit_rabbit/domain/usecases/current_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/streak_milestone_usecase.dart';
+import 'package:habit_rabbit/domain/usecases/total_carrot_points_usecase.dart';
 
 class HabitListScreen extends ConsumerStatefulWidget {
   const HabitListScreen({super.key});
@@ -210,6 +211,7 @@ class _HabitListBody extends ConsumerStatefulWidget {
 class _HabitListBodyState extends ConsumerState<_HabitListBody> {
   bool _readinessDismissed = false;
   bool _streakBreakDismissed = false;
+  bool _pointsInitialized = false;
 
   double _weeklyRate(List<Checkin> checkins) {
     final today = DateTime.now();
@@ -234,6 +236,14 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
       );
       return asyncCheckins.valueOrNull ?? const <Checkin>[];
     }).cast<Checkin>().toList();
+
+    if (!_pointsInitialized && allCheckins.isNotEmpty) {
+      _pointsInitialized = true;
+      final total = TotalCarrotPointsUseCase(checkins: allCheckins).total;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(carrotPointsProvider.notifier).initialize(total);
+      });
+    }
 
     final today = DateTime.now();
     final rate = _weeklyRate(allCheckins);

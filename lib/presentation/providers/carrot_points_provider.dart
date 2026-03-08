@@ -6,6 +6,7 @@ class CarrotPointsNotifier extends Notifier<int> {
 
   void add(int points) => state = state + points;
   void reset() => state = 0;
+  void initialize(int total) => state = total;
 }
 
 final carrotPointsProvider = NotifierProvider<CarrotPointsNotifier, int>(

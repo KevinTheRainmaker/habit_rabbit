@@ -953,5 +953,51 @@ void main() {
 
       expect(find.text('🏃'), findsOneWidget);
     });
+
+    testWidgets('기존 체크인이 있으면 당근 포인트 합산 잔액 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      final checkin1 = Checkin(
+        id: 'c-1',
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 1),
+        streakDay: 1,
+      );
+      final checkin2 = Checkin(
+        id: 'c-2',
+        habitId: 'h-1',
+        userId: 'uid-1',
+        date: DateTime(2026, 3, 2),
+        streakDay: 2,
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [checkin1, checkin2]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final expectedTotal = checkin1.carrotPoints + checkin2.carrotPoints;
+      expect(find.textContaining('$expectedTotal'), findsWidgets);
+    });
   });
 }
