@@ -23,6 +23,7 @@ import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
 import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
 import 'package:habit_rabbit/presentation/screens/streak_break_dialog.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
+import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/habit_readiness_card.dart';
 
 class HabitListScreen extends ConsumerWidget {
@@ -73,7 +74,10 @@ class HabitListScreen extends ConsumerWidget {
               if (user == null) return;
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => StatisticsScreen(userId: user.id),
+                  builder: (_) => StatisticsScreen(
+                    userId: user.id,
+                    isPremium: user.isPremium,
+                  ),
                 ),
               );
             },
@@ -107,7 +111,9 @@ class HabitListScreen extends ConsumerWidget {
                 today: DateTime.now(),
               );
               if (habits.isEmpty) {
-                return const Center(child: Text('습관을 추가해보세요!'));
+                return EmptyHabitState(
+                  onAdd: () => _showAddHabitDialog(context, ref, user),
+                );
               }
               return _HabitListBody(
                 habits: habits,

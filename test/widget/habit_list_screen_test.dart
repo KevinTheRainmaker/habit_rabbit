@@ -18,6 +18,7 @@ import 'package:habit_rabbit/presentation/screens/shop_screen.dart';
 import 'package:habit_rabbit/presentation/screens/mission_screen.dart';
 import 'package:habit_rabbit/presentation/screens/premium_gate_screen.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
+import 'package:habit_rabbit/presentation/widgets/empty_habit_state.dart';
 import 'package:habit_rabbit/presentation/widgets/completion_rate_card.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
@@ -94,7 +95,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('습관을 추가해보세요!'), findsOneWidget);
+      expect(find.byType(EmptyHabitState), findsOneWidget);
     });
 
     testWidgets('FAB 존재', (tester) async {
@@ -179,7 +180,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('안보이는 습관'), findsNothing);
-      expect(find.text('습관을 추가해보세요!'), findsOneWidget);
+      expect(find.byType(EmptyHabitState), findsOneWidget);
     });
 
     testWidgets('무료 사용자 3개 초과 시 PremiumGateScreen 표시', (tester) async {
@@ -440,6 +441,55 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(HabitDetailScreen), findsOneWidget);
+    });
+
+    testWidgets('습관이 없으면 EmptyHabitState 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EmptyHabitState), findsOneWidget);
+    });
+
+    testWidgets('프리미엄 사용자가 통계 이동 시 PremiumTeaserBanner 미표시',
+        (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: true);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.bar_chart));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(StatisticsScreen), findsOneWidget);
+      expect(find.text('업그레이드하기'), findsNothing);
     });
 
     testWidgets('통계 아이콘 탭 시 StatisticsScreen으로 이동', (tester) async {

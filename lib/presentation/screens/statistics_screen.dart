@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
+import 'package:habit_rabbit/domain/usecases/weekly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
@@ -54,6 +55,12 @@ class StatisticsScreen extends ConsumerWidget {
                     _StatCard(
                       label: '활성 습관',
                       value: '${habits.where((h) => h.isActive).length}개',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      label: '주간 달성률',
+                      value:
+                          '${(WeeklyCompletionRateUseCase(checkins: allCheckins.map((c) => c.date).toList(), today: DateTime.now()).rate * 100).toStringAsFixed(0)}%',
                     ),
                   ],
                 ),

@@ -135,5 +135,43 @@ void main() {
 
       expect(find.byType(PremiumTeaserBanner), findsNothing);
     });
+
+    testWidgets('주간 달성률 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final today = DateTime.now();
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      final checkins = List.generate(
+        7,
+        (i) => Checkin(
+          id: 'c-$i',
+          habitId: 'h-1',
+          userId: 'uid-1',
+          date: today.subtract(Duration(days: i)),
+          streakDay: i,
+        ),
+      );
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => checkins);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('주간'), findsOneWidget);
+    });
   });
 }
