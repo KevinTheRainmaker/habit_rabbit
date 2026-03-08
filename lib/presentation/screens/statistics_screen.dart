@@ -3,11 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
+import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
 
 class StatisticsScreen extends ConsumerWidget {
   final String userId;
+  final bool isPremium;
 
-  const StatisticsScreen({super.key, required this.userId});
+  const StatisticsScreen({
+    super.key,
+    required this.userId,
+    this.isPremium = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,22 +30,33 @@ class StatisticsScreen extends ConsumerWidget {
             return asyncCheckins.valueOrNull ?? const <Checkin>[];
           }).cast<Checkin>().toList();
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          return Column(
             children: [
-              _StatCard(
-                label: '등록한 습관',
-                value: '${habits.length}개',
-              ),
-              const SizedBox(height: 12),
-              _StatCard(
-                label: '총 체크인',
-                value: '${allCheckins.length}회',
-              ),
-              const SizedBox(height: 12),
-              _StatCard(
-                label: '활성 습관',
-                value: '${habits.where((h) => h.isActive).length}개',
+              if (!isPremium)
+                PremiumTeaserBanner(
+                  isPremium: isPremium,
+                  onUpgrade: () {},
+                ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _StatCard(
+                      label: '등록한 습관',
+                      value: '${habits.length}개',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      label: '총 체크인',
+                      value: '${allCheckins.length}회',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      label: '활성 습관',
+                      value: '${habits.where((h) => h.isActive).length}개',
+                    ),
+                  ],
+                ),
               ),
             ],
           );

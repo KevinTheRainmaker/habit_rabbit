@@ -7,6 +7,7 @@ import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
+import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
 
@@ -97,6 +98,42 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('습관'), findsWidgets);
+    });
+
+    testWidgets('무료 사용자 통계 화면에 PremiumTeaserBanner 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: false),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PremiumTeaserBanner), findsOneWidget);
+    });
+
+    testWidgets('프리미엄 사용자 통계 화면에 PremiumTeaserBanner 미표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PremiumTeaserBanner), findsNothing);
     });
   });
 }
