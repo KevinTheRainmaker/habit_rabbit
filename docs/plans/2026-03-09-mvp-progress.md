@@ -54,7 +54,7 @@ git commit -m "feat: show today progress in HabitListScreen"
 
 ---
 
-## Task 118: StatisticsScreen에 총 적립 포인트 표시 (TDD)
+## Task 118: StatisticsScreen에 총 적립 포인트 표시 (TDD) ✅
 
 **Files:**
 

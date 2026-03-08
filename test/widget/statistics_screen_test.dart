@@ -136,6 +136,37 @@ void main() {
       expect(find.byType(PremiumTeaserBanner), findsNothing);
     });
 
+    testWidgets('총 적립 포인트 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 7),
+        isActive: true,
+      );
+      final checkins = [
+        Checkin(id: 'c-1', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 7), streakDay: 0),
+        Checkin(id: 'c-2', habitId: 'h-1', userId: 'uid-1', date: DateTime(2026, 3, 6), streakDay: 0),
+      ];
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => checkins);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [habitRepositoryProvider.overrideWithValue(mockHabit)],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('당근'), findsWidgets);
+    });
+
     testWidgets('주간 달성률 표시', (tester) async {
       final mockHabit = MockHabitRepository();
       final today = DateTime.now();

@@ -62,6 +62,11 @@ class StatisticsScreen extends ConsumerWidget {
                       value:
                           '${(WeeklyCompletionRateUseCase(checkins: allCheckins.map((c) => c.date).toList(), today: DateTime.now()).rate * 100).toStringAsFixed(0)}%',
                     ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      label: '총 적립 당근',
+                      value: '${allCheckins.fold(0, (sum, c) => sum + c.carrotPoints)}개',
+                    ),
                   ],
                 ),
               ),
