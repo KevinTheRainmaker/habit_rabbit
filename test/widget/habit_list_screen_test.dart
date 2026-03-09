@@ -1210,6 +1210,50 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
+    // RED: pull-to-refresh 제스처 시 습관 목록이 다시 로드됨
+    testWidgets('아래로 당기면 습관 목록이 새로고침됨', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.getCheckins(
+            habitId: any(named: 'habitId'),
+            userId: any(named: 'userId'),
+          )).thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      clearInteractions(mockHabit);
+
+      // pull-to-refresh 제스처
+      await tester.fling(
+        find.byType(ListView),
+        const Offset(0, 300),
+        1000,
+      );
+      await tester.pumpAndSettle();
+
+      verify(() => mockHabit.getHabits(userId: 'uid-1')).called(1);
+    });
+
     // RED: 자정 타이머가 발동하면 currentDateProvider가 새 날짜로 갱신됨
     testWidgets('앱이 자정 이후에도 실행 중이면 currentDateProvider가 새 날짜로 갱신됨', (tester) async {
       final mockHabit = MockHabitRepository();

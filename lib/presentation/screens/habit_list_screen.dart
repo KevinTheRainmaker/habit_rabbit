@@ -373,12 +373,17 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
             onRestart: () => setState(() => _streakBreakDismissed = true),
           ),
         Expanded(
-          child: ListView.builder(
-            itemCount: widget.habits.length,
-            itemBuilder: (context, index) {
-              return _HabitTile(
-                  habit: widget.habits[index], user: widget.user);
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(habitListNotifierProvider(widget.user.id));
             },
+            child: ListView.builder(
+              itemCount: widget.habits.length,
+              itemBuilder: (context, index) {
+                return _HabitTile(
+                    habit: widget.habits[index], user: widget.user);
+              },
+            ),
           ),
         ),
       ],
