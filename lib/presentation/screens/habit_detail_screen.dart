@@ -6,6 +6,7 @@ import 'package:habit_rabbit/domain/usecases/all_time_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/get_checkins_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 
 class HabitDetailScreen extends ConsumerWidget {
@@ -27,7 +28,7 @@ class HabitDetailScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('오류: $e')),
         data: (checkins) {
           final repository = ref.read(habitRepositoryProvider);
-          final today = DateTime.now();
+          final today = ref.watch(currentDateProvider);
           final useCase = GetCheckinsUseCase(repository);
           final rateUseCase = MonthlyCompletionRateUseCase();
           final allTimeStreakUseCase = AllTimeStreakUseCase();

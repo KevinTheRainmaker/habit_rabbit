@@ -6,6 +6,7 @@ import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/habit_detail_screen.dart';
 
@@ -127,6 +128,39 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('%'), findsOneWidget);
+    });
+
+    // RED: HabitDetailScreen이 currentDateProvider 날짜로 달성률 계산
+    testWidgets('HabitDetailScreen이 currentDateProvider 날짜를 사용함', (tester) async {
+      final mockRepo = MockHabitRepository();
+      final futureDate = DateTime(9999, 1, 1);
+      // futureDate 날짜에 체크인
+      when(() => mockRepo.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [
+                Checkin(
+                  id: 'c-1',
+                  habitId: 'h-1',
+                  userId: 'uid-1',
+                  date: futureDate,
+                  streakDay: 0,
+                ),
+              ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockRepo),
+            currentDateProvider.overrideWith((ref) => futureDate),
+          ],
+          child: MaterialApp(
+            home: HabitDetailScreen(habit: habit, user: user),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // currentDateProvider 날짜로 달성률이 100% (체크인 1개/1개)
+      expect(find.textContaining('100%'), findsOneWidget);
     });
   });
 }
