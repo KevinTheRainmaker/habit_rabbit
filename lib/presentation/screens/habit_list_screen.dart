@@ -8,6 +8,8 @@ import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/domain/usecases/monthly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/today_habits_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
+import 'package:habit_rabbit/domain/models/carrot_point_config.dart';
+import 'package:habit_rabbit/presentation/providers/carrot_config_provider.dart';
 import 'package:habit_rabbit/presentation/providers/carrot_points_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkin_provider.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
@@ -487,11 +489,13 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
           date: DateTime.now(),
         )).future,
       );
-      ref.read(carrotPointsProvider.notifier).add(checkin.carrotPoints);
+      final config = ref.read(carrotConfigProvider).valueOrNull ?? CarrotPointConfig.defaults;
+      final earnedPoints = config.computePoints(checkin.streakDay);
+      ref.read(carrotPointsProvider.notifier).add(earnedPoints);
       final streak = checkin.streakDay + 1;
       setState(() {
         _sessionCheckedIn = true;
-        _earnedPoints = checkin.carrotPoints;
+        _earnedPoints = earnedPoints;
         _streak = streak;
         _milestoneMessage = StreakMilestoneUseCase(streak: streak).message;
       });
