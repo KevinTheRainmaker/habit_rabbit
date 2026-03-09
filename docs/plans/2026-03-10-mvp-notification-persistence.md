@@ -4,7 +4,7 @@
 
 ---
 
-## Task 209: HiveNotificationRepository (TDD)
+## Task 209: HiveNotificationRepository (TDD) ✅
 
 Hive Box에 NotificationSettings를 저장/로드.
 
@@ -32,7 +32,7 @@ git commit -m "feat: add HiveNotificationRepository for persistent notification 
 
 ---
 
-## Task 210: main.dart에 알림 설정 영속성 연결
+## Task 210: main.dart에 알림 설정 영속성 연결 ✅
 
 **Files:**
 
@@ -54,7 +54,7 @@ git commit -m "feat: wire HiveNotificationRepository in main.dart for persistent
 
 ---
 
-## Task 211: 전체 테스트 통과 확인
+## Task 211: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test
