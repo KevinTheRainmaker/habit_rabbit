@@ -86,7 +86,7 @@ git commit -m "feat: haptic feedback on habit checkin"
 
 ---
 
-## Task 240: 전체 테스트 통과 확인
+## Task 240: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test
