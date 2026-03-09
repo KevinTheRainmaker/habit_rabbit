@@ -1164,5 +1164,54 @@ void main() {
       // 월요일에는 습관이 표시됨
       expect(find.text('월요일 운동'), findsOneWidget);
     });
+
+    // RED: _HabitListBody가 currentDateProvider 날짜로 오늘 진행률을 표시
+    testWidgets('currentDateProvider 날짜로 오늘 진행률 계산', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      // 미래 날짜를 currentDateProvider로 설정
+      final futureDate = DateTime(9999, 1, 1);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      // futureDate에 체크인이 있음
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [
+                Checkin(
+                  id: 'c-1',
+                  habitId: 'h-1',
+                  userId: 'uid-1',
+                  date: futureDate,
+                  streakDay: 0,
+                ),
+              ]);
+
+      final container = ProviderContainer(
+        overrides: [
+          habitRepositoryProvider.overrideWithValue(mockHabit),
+          authRepositoryProvider.overrideWithValue(mockAuth),
+          currentDateProvider.overrideWith((ref) => futureDate),
+        ],
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // currentDateProvider(9999-01-01)의 날짜로 체크인이 1개이므로 "오늘 1 / 1" 표시
+      expect(find.text('오늘 1 / 1'), findsOneWidget);
+    });
   });
 }

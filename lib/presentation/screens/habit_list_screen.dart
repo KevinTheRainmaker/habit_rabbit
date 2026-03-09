@@ -239,8 +239,7 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
   bool _streakBreakDismissed = false;
   bool _pointsInitialized = false;
 
-  double _weeklyRate(List<Checkin> checkins) {
-    final today = DateTime.now();
+  double _weeklyRate(List<Checkin> checkins, DateTime today) {
     int completed = 0;
     for (int i = 0; i < 7; i++) {
       final day = today.subtract(Duration(days: i));
@@ -275,8 +274,8 @@ class _HabitListBodyState extends ConsumerState<_HabitListBody> {
       });
     }
 
-    final today = DateTime.now();
-    final rate = _weeklyRate(allCheckins);
+    final today = ref.watch(currentDateProvider);
+    final rate = _weeklyRate(allCheckins, today);
     final showReadiness =
         !_readinessDismissed && rate >= 0.8 && widget.allHabits.length < 3;
 
