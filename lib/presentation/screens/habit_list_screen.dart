@@ -171,9 +171,29 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen>
                 habits: allHabits,
                 today: today,
               );
-              if (habits.isEmpty) {
+              if (allHabits.isEmpty) {
                 return EmptyHabitState(
                   onAdd: () => _showAddHabitDialog(context, user),
+                );
+              }
+              if (habits.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('😴', style: TextStyle(fontSize: 48)),
+                      SizedBox(height: 16),
+                      Text(
+                        '오늘은 쉬는 날이에요!',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '내일 또 달려봐요 🐰',
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 );
               }
               return _HabitListBody(

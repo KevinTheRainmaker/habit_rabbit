@@ -191,7 +191,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('안보이는 습관'), findsNothing);
-      expect(find.byType(EmptyHabitState), findsOneWidget);
+      // 습관은 있지만 오늘 요일에 해당 없음 → 쉬는 날 메시지 표시
+      expect(find.text('오늘은 쉬는 날이에요!'), findsOneWidget);
     });
 
     testWidgets('무료 사용자 3개 초과 시 PremiumGateScreen 표시', (tester) async {
@@ -1208,6 +1209,47 @@ void main() {
 
       // 체크인 완료 아이콘(Icons.check_circle)이 표시되어야 함
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    });
+
+    // RED: 습관이 있지만 오늘 요일에 해당 없으면 쉬는 날 메시지 표시
+    testWidgets('습관이 있지만 오늘 요일에 해당 없으면 쉬는 날 메시지 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      // 2026-03-01은 일요일 (weekday=7)
+      final sunday = DateTime(2026, 3, 1);
+      // 월~금 (targetDays=[0,1,2,3,4]) 습관 → 일요일에는 해당 없음
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '평일 운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+        targetDays: const [0, 1, 2, 3, 4],
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      when(() => mockHabit.getCheckins(
+            habitId: any(named: 'habitId'),
+            userId: any(named: 'userId'),
+          )).thenAnswer((_) async => []);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            currentDateProvider.overrideWith((ref) => sunday),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('오늘은 쉬는 날이에요!'), findsOneWidget);
+      // "첫 습관 추가하기" 버튼은 표시되면 안 됨 (습관이 이미 있으므로)
+      expect(find.text('첫 습관 추가하기'), findsNothing);
     });
 
     // RED: 습관 로딩 실패 시 에러 UI 표시
