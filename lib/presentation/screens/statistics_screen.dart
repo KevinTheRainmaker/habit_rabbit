@@ -5,6 +5,7 @@ import 'package:habit_rabbit/domain/usecases/best_streak_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/failure_pattern_usecase.dart';
 import 'package:habit_rabbit/domain/usecases/weekly_completion_rate_usecase.dart';
 import 'package:habit_rabbit/presentation/providers/checkins_provider.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_blur_overlay.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_teaser_banner.dart';
@@ -34,7 +35,7 @@ class StatisticsScreen extends ConsumerWidget {
             return asyncCheckins.valueOrNull ?? const <Checkin>[];
           }).cast<Checkin>().toList();
 
-          final today = DateTime.now();
+          final today = ref.watch(currentDateProvider);
 
           return Column(
             children: [
@@ -65,7 +66,7 @@ class StatisticsScreen extends ConsumerWidget {
                     _StatCard(
                       label: '주간 달성률',
                       value:
-                          '${(WeeklyCompletionRateUseCase(checkins: allCheckins.map((c) => c.date).toList(), today: DateTime.now()).rate * 100).toStringAsFixed(0)}%',
+                          '${(WeeklyCompletionRateUseCase(checkins: allCheckins.map((c) => c.date).toList(), today: today).rate * 100).toStringAsFixed(0)}%',
                     ),
                     const SizedBox(height: 12),
                     _StatCard(

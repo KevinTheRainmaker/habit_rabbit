@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
 import 'package:habit_rabbit/domain/repositories/habit_repository.dart';
+import 'package:habit_rabbit/presentation/providers/date_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/screens/statistics_screen.dart';
 import 'package:habit_rabbit/presentation/widgets/premium_blur_overlay.dart';
@@ -413,6 +414,46 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.textContaining('분석 준비 중'), findsOneWidget);
+    });
+
+    // RED: StatisticsScreen이 currentDateProvider 날짜로 주간 달성률 계산
+    testWidgets('StatisticsScreen이 currentDateProvider 날짜로 주간 달성률 계산', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final futureDate = DateTime(9999, 1, 1);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      // futureDate에 7번 체크인 → 주간 달성률 100%
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => List.generate(7, (i) => Checkin(
+                id: 'c-$i',
+                habitId: 'h-1',
+                userId: 'uid-1',
+                date: futureDate.subtract(Duration(days: i)),
+                streakDay: i,
+              )));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            currentDateProvider.overrideWith((ref) => futureDate),
+          ],
+          child: const MaterialApp(
+            home: StatisticsScreen(userId: 'uid-1', isPremium: true),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // currentDateProvider(9999-01-01) 기준 최근 7일 모두 체크인 → 주간 달성률 100%
+      expect(find.text('100%'), findsOneWidget);
     });
   });
 }
