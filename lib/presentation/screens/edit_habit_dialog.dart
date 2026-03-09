@@ -17,6 +17,7 @@ class EditHabitDialog extends StatefulWidget {
 class _EditHabitDialogState extends State<EditHabitDialog> {
   late final TextEditingController _controller;
   String? _errorText;
+  String? _daysErrorText;
   late final Set<int> _selectedDays;
   late String _selectedIcon;
 
@@ -47,10 +48,14 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
   void _onSave() {
     final name = _controller.text.trim();
     if (name.isEmpty) {
-      setState(() => _errorText = '습관 이름을 입력해주세요');
+      setState(() { _errorText = '습관 이름을 입력해주세요'; _daysErrorText = null; });
       return;
     }
-    setState(() => _errorText = null);
+    if (_selectedDays.isEmpty) {
+      setState(() { _errorText = null; _daysErrorText = '최소 하나의 요일을 선택해주세요'; });
+      return;
+    }
+    setState(() { _errorText = null; _daysErrorText = null; });
     final days = _selectedDays.toList()..sort();
     widget.onSaved?.call(name, days, _selectedIcon);
   }
@@ -79,6 +84,14 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
           ),
           const SizedBox(height: 16),
           const Text('반복 요일', style: TextStyle(fontWeight: FontWeight.w500)),
+          if (_daysErrorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _daysErrorText!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+              ),
+            ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
