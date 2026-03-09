@@ -380,7 +380,7 @@ class _HabitTile extends ConsumerStatefulWidget {
 }
 
 class _HabitTileState extends ConsumerState<_HabitTile> {
-  bool _checkedIn = false;
+  bool _sessionCheckedIn = false;
   int _earnedPoints = 0;
   int _streak = 0;
   String? _milestoneMessage;
@@ -408,7 +408,19 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
   }
 
   Future<void> _onTap() async {
-    if (_checkedIn) return;
+    if (_sessionCheckedIn) return;
+    final today = ref.read(currentDateProvider);
+    final checkinsAsync = ref.read(
+      checkinsListProvider((habitId: widget.habit.id, userId: widget.userId)),
+    );
+    final alreadyCheckedIn = checkinsAsync.valueOrNull?.any(
+          (c) =>
+              c.date.year == today.year &&
+              c.date.month == today.month &&
+              c.date.day == today.day,
+        ) ??
+        false;
+    if (alreadyCheckedIn) return;
     try {
       final checkin = await ref.read(
         checkInProvider((
@@ -420,7 +432,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
       ref.read(carrotPointsProvider.notifier).add(checkin.carrotPoints);
       final streak = checkin.streakDay + 1;
       setState(() {
-        _checkedIn = true;
+        _sessionCheckedIn = true;
         _earnedPoints = checkin.carrotPoints;
         _streak = streak;
         _milestoneMessage = StreakMilestoneUseCase(streak: streak).message;
@@ -433,6 +445,19 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
 
   @override
   Widget build(BuildContext context) {
+    final checkinsAsync = ref.watch(
+      checkinsListProvider((habitId: widget.habit.id, userId: widget.userId)),
+    );
+    final today = ref.watch(currentDateProvider);
+    final alreadyCheckedIn = checkinsAsync.valueOrNull?.any(
+          (c) =>
+              c.date.year == today.year &&
+              c.date.month == today.month &&
+              c.date.day == today.day,
+        ) ??
+        false;
+    final checkedIn = _sessionCheckedIn || alreadyCheckedIn;
+
     return Dismissible(
       key: Key(widget.habit.id),
       direction: DismissDirection.endToStart,
@@ -466,7 +491,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
       child: ListTile(
         leading: widget.habit.icon.isNotEmpty ? Text(widget.habit.icon, style: const TextStyle(fontSize: 24)) : null,
         title: Text(widget.habit.name),
-        subtitle: _checkedIn
+        subtitle: checkedIn
             ? Text(_milestoneMessage != null
                 ? '🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속\n$_milestoneMessage'
                 : '🥕 +$_earnedPoints 획득! · 🔥 $_streak일 연속')
@@ -475,8 +500,8 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              _checkedIn ? Icons.check_circle : Icons.check_circle_outline,
-              color: _checkedIn ? Colors.orange : null,
+              checkedIn ? Icons.check_circle : Icons.check_circle_outline,
+              color: checkedIn ? Colors.orange : null,
             ),
             IconButton(
               icon: const Icon(Icons.info_outline),

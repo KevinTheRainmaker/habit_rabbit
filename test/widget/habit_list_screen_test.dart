@@ -1165,6 +1165,50 @@ void main() {
       expect(find.text('월요일 운동'), findsOneWidget);
     });
 
+    // RED: 앱 재시작 후 오늘 체크인 상태 복원
+    testWidgets('기존 오늘 체크인이 있으면 체크인 완료 아이콘 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      final today = DateTime(2026, 3, 10);
+      final habit = Habit(
+        id: 'h-1',
+        userId: 'uid-1',
+        name: '매일 운동',
+        createdAt: DateTime(2026, 3, 1),
+        isActive: true,
+      );
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenAnswer((_) async => [habit]);
+      // 오늘 이미 체크인한 상태
+      when(() => mockHabit.getCheckins(habitId: 'h-1', userId: 'uid-1'))
+          .thenAnswer((_) async => [
+                Checkin(
+                  id: 'c-1',
+                  habitId: 'h-1',
+                  userId: 'uid-1',
+                  date: today,
+                  streakDay: 0,
+                ),
+              ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            currentDateProvider.overrideWith((ref) => today),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 체크인 완료 아이콘(Icons.check_circle)이 표시되어야 함
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    });
+
     // RED: _HabitListBody가 currentDateProvider 날짜로 오늘 진행률을 표시
     testWidgets('currentDateProvider 날짜로 오늘 진행률 계산', (tester) async {
       final mockHabit = MockHabitRepository();
