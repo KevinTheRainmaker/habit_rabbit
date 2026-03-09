@@ -183,7 +183,21 @@ class _HabitListScreenState extends ConsumerState<HabitListScreen>
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Center(child: Text('오류가 발생했습니다')),
+            error: (_, __) => Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.grey),
+                  const SizedBox(height: 8),
+                  const Text('습관을 불러오지 못했어요'),
+                  TextButton(
+                    onPressed: () =>
+                        ref.invalidate(habitListNotifierProvider(user.id)),
+                    child: const Text('다시 시도'),
+                  ),
+                ],
+              ),
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

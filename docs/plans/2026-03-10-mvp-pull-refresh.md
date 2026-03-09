@@ -43,7 +43,7 @@ git commit -m "feat: pull-to-refresh habit list"
 
 ---
 
-## Task 242: 습관 목록 에러 상태 표시 (TDD)
+## Task 242: 습관 목록 에러 상태 표시 (TDD) ✅
 
 **Files:**
 
@@ -84,7 +84,7 @@ git commit -m "feat: show error state when habit loading fails"
 
 ---
 
-## Task 243: 전체 테스트 통과 확인
+## Task 243: 전체 테스트 통과 확인 ✅
 
 ```bash
 flutter test

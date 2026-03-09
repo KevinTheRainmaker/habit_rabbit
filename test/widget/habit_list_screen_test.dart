@@ -1210,6 +1210,31 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
+    // RED: 습관 로딩 실패 시 에러 UI 표시
+    testWidgets('습관 로딩 실패 시 에러 메시지와 다시 시도 버튼 표시', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1'))
+          .thenThrow(Exception('DB 오류'));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+      expect(find.text('습관을 불러오지 못했어요'), findsOneWidget);
+      expect(find.text('다시 시도'), findsOneWidget);
+    });
+
     // RED: pull-to-refresh 제스처 시 습관 목록이 다시 로드됨
     testWidgets('아래로 당기면 습관 목록이 새로고침됨', (tester) async {
       final mockHabit = MockHabitRepository();
