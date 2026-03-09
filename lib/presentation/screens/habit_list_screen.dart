@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
 import 'package:habit_rabbit/domain/entities/habit.dart';
@@ -456,6 +457,7 @@ class _HabitTileState extends ConsumerState<_HabitTile> {
         _milestoneMessage = StreakMilestoneUseCase(streak: streak).message;
       });
       _autoCompleteMissions(checkin.streakDay + 1);
+      HapticFeedback.mediumImpact().ignore();
     } catch (_) {
       // 이미 체크인한 경우 무시
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -1287,6 +1288,64 @@ void main() {
 
       // currentDateProvider(9999-01-01)의 날짜로 체크인이 1개이므로 "오늘 1 / 1" 표시
       expect(find.text('오늘 1 / 1'), findsOneWidget);
+    });
+
+    // RED: 체크인 탭 시 햅틱 피드백 발생
+    testWidgets('체크인 탭 시 햅틱 피드백 발생', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => [
+            Habit(
+              id: 'h-1',
+              userId: 'uid-1',
+              name: '매일 운동',
+              createdAt: DateTime(2026, 3, 7),
+              isActive: true,
+            ),
+          ]);
+      when(() => mockHabit.checkIn(
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: any(named: 'date'),
+          )).thenAnswer((_) async => Checkin(
+            id: 'c-1',
+            habitId: 'h-1',
+            userId: 'uid-1',
+            date: DateTime(2026, 3, 7),
+            streakDay: 0,
+          ));
+
+      final log = <MethodCall>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          log.add(call);
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            habitRepositoryProvider.overrideWithValue(mockHabit),
+            authRepositoryProvider.overrideWithValue(mockAuth),
+          ],
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('매일 운동'));
+      await tester.pumpAndSettle();
+
+      expect(
+        log.any((call) =>
+            call.method == 'HapticFeedback.vibrate' &&
+            call.arguments == 'HapticFeedbackType.mediumImpact'),
+        isTrue,
+      );
     });
   });
 }

@@ -52,7 +52,7 @@ git commit -m "feat: auto-refresh date at midnight via timer in HabitListScreen"
 
 ---
 
-## Task 239: 햅틱 피드백 — 체크인 시 진동 (TDD)
+## Task 239: 햅틱 피드백 — 체크인 시 진동 (TDD) ✅
 
 **Files:**
 
