@@ -155,5 +155,32 @@ void main() {
 
       expect(savedDays, contains(0)); // 0 = 월요일 (0-based index)
     });
+
+    // RED: 요일 미선택 시 저장 불가
+    testWidgets('요일 미선택 시 저장 불가 에러 메시지 표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(body: SingleChildScrollView(child: AddHabitDialog())),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 이름 입력
+      await tester.enterText(find.byType(TextField), '매일 운동');
+
+      // 모든 요일 해제 (기본 전체 선택 → 모두 탭해서 해제)
+      for (final day in ['월', '화', '수', '목', '금', '토', '일']) {
+        await tester.tap(find.text(day));
+        await tester.pump();
+      }
+
+      // 저장 시도
+      await tester.tap(find.text('저장'));
+      await tester.pump();
+
+      expect(find.textContaining('최소 하나의 요일'), findsOneWidget);
+    });
   });
 }

@@ -15,6 +15,7 @@ class AddHabitDialog extends StatefulWidget {
 class _AddHabitDialogState extends State<AddHabitDialog> {
   final _controller = TextEditingController();
   String? _errorText;
+  String? _daysErrorText;
   // 0=월 ~ 6=일, 기본: 전체 선택
   final Set<int> _selectedDays = {0, 1, 2, 3, 4, 5, 6};
   String _selectedIcon = '';
@@ -38,10 +39,14 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   void _onSave() {
     final name = _controller.text.trim();
     if (name.isEmpty) {
-      setState(() => _errorText = '습관 이름을 입력해주세요');
+      setState(() { _errorText = '습관 이름을 입력해주세요'; _daysErrorText = null; });
       return;
     }
-    setState(() => _errorText = null);
+    if (_selectedDays.isEmpty) {
+      setState(() { _errorText = null; _daysErrorText = '최소 하나의 요일을 선택해주세요'; });
+      return;
+    }
+    setState(() { _errorText = null; _daysErrorText = null; });
     final days = _selectedDays.toList()..sort();
     widget.onSaved?.call(name, days, _selectedIcon);
   }
@@ -98,6 +103,14 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
           ),
           const SizedBox(height: 16),
           const Text('반복 요일', style: TextStyle(fontWeight: FontWeight.w500)),
+          if (_daysErrorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _daysErrorText!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+              ),
+            ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
