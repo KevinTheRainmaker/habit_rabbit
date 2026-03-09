@@ -51,6 +51,10 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
       setState(() { _errorText = '습관 이름을 입력해주세요'; _daysErrorText = null; });
       return;
     }
+    if (name.length > 30) {
+      setState(() { _errorText = '습관 이름은 30자 이내로 입력해주세요'; _daysErrorText = null; });
+      return;
+    }
     if (_selectedDays.isEmpty) {
       setState(() { _errorText = null; _daysErrorText = '최소 하나의 요일을 선택해주세요'; });
       return;

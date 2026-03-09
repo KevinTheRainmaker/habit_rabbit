@@ -182,5 +182,24 @@ void main() {
 
       expect(find.textContaining('최소 하나의 요일'), findsOneWidget);
     });
+
+    // RED: 습관 이름 30자 초과 시 저장 불가
+    testWidgets('31자 이상 이름 입력 시 저장 불가 에러 표시', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(body: SingleChildScrollView(child: AddHabitDialog())),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 31자 입력
+      await tester.enterText(find.byType(TextField), 'a' * 31);
+      await tester.tap(find.text('저장'));
+      await tester.pump();
+
+      expect(find.textContaining('30자'), findsOneWidget);
+    });
   });
 }
