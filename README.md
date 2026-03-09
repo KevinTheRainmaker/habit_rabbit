@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## Screenshot
+
+![Home screen](docs/screenshot-home.png)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
