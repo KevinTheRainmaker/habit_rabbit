@@ -34,8 +34,8 @@ dependencies:
   # RevenueCat
   purchases_flutter: ^8.0.0
 
-  # 기타 — 외부 설정 완료 후 주석 해제
-  # cloud_firestore: ^5.2.1
+  # Firestore
+  cloud_firestore: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +46,7 @@ dev_dependencies:
   freezed: ^2.5.7
   json_serializable: ^6.8.0
   mocktail: ^1.0.4
+  fake_cloud_firestore: ^3.0.0
 
 flutter:
   uses-material-design: true

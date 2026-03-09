@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:habit_rabbit/data/repositories/firebase_auth_repository.dart';
+import 'package:habit_rabbit/data/repositories/firestore_habit_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_mission_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_notification_repository.dart';
@@ -12,6 +13,8 @@ import 'package:habit_rabbit/data/repositories/hive_onboarding_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_recovery_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_shop_repository.dart';
 import 'package:habit_rabbit/data/repositories/revenuecat_subscription_repository.dart';
+import 'package:habit_rabbit/data/repositories/sync_habit_repository.dart';
+import 'package:habit_rabbit/domain/entities/user.dart';
 import 'package:habit_rabbit/presentation/providers/auth_provider.dart';
 import 'package:habit_rabbit/presentation/providers/habit_provider.dart';
 import 'package:habit_rabbit/presentation/providers/mission_provider.dart';
@@ -20,6 +23,7 @@ import 'package:habit_rabbit/presentation/providers/onboarding_provider.dart';
 import 'package:habit_rabbit/presentation/providers/recovery_provider.dart';
 import 'package:habit_rabbit/presentation/providers/shop_provider.dart';
 import 'package:habit_rabbit/presentation/providers/subscription_provider.dart';
+import 'package:habit_rabbit/presentation/providers/sync_provider.dart';
 import 'package:habit_rabbit/presentation/screens/app_router.dart';
 
 void main() async {
@@ -45,9 +49,13 @@ void main() async {
   final onboardingRepo = HiveOnboardingRepository(onboardingBox);
   final initialNotifSettings = await notifRepo.loadSettings();
   final initialOnboardingCompleted = await onboardingRepo.isCompleted();
+  final syncHabitRepo = SyncHabitRepository(
+    local: HiveHabitRepository(habitBox),
+    remote: FirestoreHabitRepository(),
+  );
   runApp(ProviderScope(
     overrides: [
-      habitRepositoryProvider.overrideWithValue(HiveHabitRepository(habitBox)),
+      habitRepositoryProvider.overrideWithValue(syncHabitRepo),
       shopRepositoryProvider.overrideWithValue(HiveShopRepository(shopBox)),
       recoveryRepositoryProvider.overrideWithValue(HiveRecoveryRepository(recoveryBox)),
       missionRepositoryProvider.overrideWithValue(HiveMissionRepository(missionBox)),
@@ -58,15 +66,25 @@ void main() async {
         (ref) => initialOnboardingCompleted,
       ),
     ],
-    child: HabitRabbitApp(notifRepo: notifRepo, onboardingRepo: onboardingRepo),
+    child: HabitRabbitApp(
+      notifRepo: notifRepo,
+      onboardingRepo: onboardingRepo,
+      syncHabitRepo: syncHabitRepo,
+    ),
   ));
 }
 
 class HabitRabbitApp extends ConsumerWidget {
   final HiveNotificationRepository? notifRepo;
   final HiveOnboardingRepository? onboardingRepo;
+  final SyncHabitRepository? syncHabitRepo;
 
-  const HabitRabbitApp({this.notifRepo, this.onboardingRepo, super.key});
+  const HabitRabbitApp({
+    this.notifRepo,
+    this.onboardingRepo,
+    this.syncHabitRepo,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,6 +99,22 @@ class HabitRabbitApp extends ConsumerWidget {
           onboardingRepo!.setCompleted();
         } else {
           onboardingRepo!.reset();
+        }
+      });
+    }
+    if (syncHabitRepo != null) {
+      ref.listen<AsyncValue<User?>>(currentUserProvider, (previous, next) {
+        final user = next.valueOrNull;
+        final prevUser = previous?.valueOrNull;
+        if (user != null && prevUser == null) {
+          syncHabitRepo!
+              .syncFromRemote(userId: user.id)
+              .then((_) {
+                ref
+                    .read(lastSyncedAtProvider.notifier)
+                    .update(DateTime.now());
+              })
+              .ignore();
         }
       });
     }
