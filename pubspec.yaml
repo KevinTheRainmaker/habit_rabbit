@@ -30,9 +30,11 @@ dependencies:
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.1
 
-  # RevenueCat / 기타 — 외부 설정 완료 후 주석 해제
+  # RevenueCat
+  purchases_flutter: ^8.0.0
+
+  # 기타 — 외부 설정 완료 후 주석 해제
   # cloud_firestore: ^5.2.1
-  # purchases_flutter: ^8.0.0
 
 dev_dependencies:
   flutter_test:
