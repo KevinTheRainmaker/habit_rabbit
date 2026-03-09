@@ -7,9 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Habit Rabbit** — 토끼굴 세계관과 당근 포인트 경제를 기반으로 한 프리미엄 습관 트래커 앱.
 
 - **개발 형태**: 1인 개발, 수익화 목표
-- **플랫폼**: iOS / Android (기술 스택 미확정 — Flutter/RN/네이티브 결정 필요)
+- **플랫폼**: iOS / Android (Flutter — `docs/adr-tech-stack.md` 참조)
 - **구독 관리**: RevenueCat
-- **현재 상태**: 디스커버리/기획 완료, 개발 미시작
+- **현재 상태**: MVP Phase 1 로컬 구현 완료 (407개 테스트 통과, 0 analyze 이슈)
 
 ## 프리미엄 모델
 
@@ -99,6 +99,13 @@ docs/
 
 1. **구독 가격**: 3,900원 vs 6,900원/월 (E4: RevenueCat A/B로 결정)
 2. **무료 한도**: 3개 vs 5개 (E5: 베타 A/B로 결정)
+
+## 개발 현황
+
+- **테스트**: 407개 통과, 0 analyze 이슈 (2026-03-09 기준)
+- **완료**: 습관 CRUD, 체크인/스트릭/당근 포인트, 프리미엄 게이트, 통계, 알림 설정, 온보딩, 아이템 샵, 자정 갱신, 햅틱, Pull-to-refresh
+- **다음 단계**: Firebase Auth 실제 연동 → RevenueCat 구독 → FCM 알림 → Firestore 싱크
+- **주요 개발 문서**: `PROMPT.md` (TDD 루프), `docs/plans/` (태스크별 구현 계획), `tasks/lessons.md` (Flutter 테스트 패턴)
 
 ## 개발 로드맵
 
