@@ -1209,6 +1209,37 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
+    // RED: 자정 타이머가 발동하면 currentDateProvider가 새 날짜로 갱신됨
+    testWidgets('앱이 자정 이후에도 실행 중이면 currentDateProvider가 새 날짜로 갱신됨', (tester) async {
+      final mockHabit = MockHabitRepository();
+      final mockAuth = MockAuthRepository();
+      const user = User(id: 'uid-1', email: 'test@test.com', isPremium: false);
+      when(() => mockAuth.currentUser).thenAnswer((_) => Stream.value(user));
+      when(() => mockHabit.getHabits(userId: 'uid-1')).thenAnswer((_) async => []);
+
+      final container = ProviderContainer(overrides: [
+        habitRepositoryProvider.overrideWithValue(mockHabit),
+        authRepositoryProvider.overrideWithValue(mockAuth),
+      ]);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: HabitListScreen()),
+        ),
+      );
+      await tester.pump();
+
+      final initialDate = container.read(currentDateProvider);
+
+      // 자정을 넘어서 25시간 진행 → 자정 타이머 발동
+      await tester.pump(const Duration(hours: 25));
+
+      final updatedDate = container.read(currentDateProvider);
+      // 날짜가 변경되었어야 함
+      expect(updatedDate.day, isNot(equals(initialDate.day)));
+    });
+
     // RED: _HabitListBody가 currentDateProvider 날짜로 오늘 진행률을 표시
     testWidgets('currentDateProvider 날짜로 오늘 진행률 계산', (tester) async {
       final mockHabit = MockHabitRepository();

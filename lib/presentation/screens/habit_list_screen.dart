@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habit_rabbit/domain/entities/checkin.dart';
@@ -45,15 +46,32 @@ class HabitListScreen extends ConsumerStatefulWidget {
 class _HabitListScreenState extends ConsumerState<HabitListScreen>
     with WidgetsBindingObserver {
   int _upsellCount = 0;
+  Timer? _midnightTimer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _scheduleMidnightRefresh();
+  }
+
+  void _scheduleMidnightRefresh() {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final untilMidnight = tomorrow.difference(now);
+    _midnightTimer = Timer(untilMidnight, () {
+      if (mounted) {
+        final current = ref.read(currentDateProvider);
+        ref.read(currentDateProvider.notifier).state =
+            DateTime(current.year, current.month, current.day + 1);
+        _scheduleMidnightRefresh();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _midnightTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
