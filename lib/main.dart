@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -24,6 +25,12 @@ import 'package:habit_rabbit/presentation/screens/app_router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseRemoteConfig.instance.setDefaults({
+    'carrot_base_points': 10,
+    'carrot_7day_bonus': 5,
+    'carrot_30day_bonus': 10,
+    'carrot_100day_bonus': 15,
+  });
   await Purchases.configure(
     PurchasesConfiguration('YOUR_REVENUECAT_API_KEY'),
   );
