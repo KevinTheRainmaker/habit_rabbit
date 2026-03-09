@@ -1,7 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:habit_rabbit/data/repositories/hive_auth_repository.dart';
+import 'package:habit_rabbit/data/repositories/firebase_auth_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_habit_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_mission_repository.dart';
 import 'package:habit_rabbit/data/repositories/hive_notification_repository.dart';
@@ -21,13 +22,13 @@ import 'package:habit_rabbit/presentation/screens/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await Hive.initFlutter();
   final habitBox = await Hive.openBox('habits');
   final shopBox = await Hive.openBox('shop');
   final recoveryBox = await Hive.openBox('recovery');
   final missionBox = await Hive.openBox('missions');
   final subscriptionBox = await Hive.openBox('subscription');
-  final authBox = await Hive.openBox('auth');
   final notifBox = await Hive.openBox('notification');
   final onboardingBox = await Hive.openBox('onboarding');
   final notifRepo = HiveNotificationRepository(notifBox);
@@ -41,7 +42,7 @@ void main() async {
       recoveryRepositoryProvider.overrideWithValue(HiveRecoveryRepository(recoveryBox)),
       missionRepositoryProvider.overrideWithValue(HiveMissionRepository(missionBox)),
       subscriptionRepositoryProvider.overrideWithValue(HiveSubscriptionRepository(subscriptionBox)),
-      authRepositoryProvider.overrideWithValue(HiveAuthRepository(authBox)),
+      authRepositoryProvider.overrideWithValue(FirebaseAuthRepository()),
       notificationSettingsProvider.overrideWith((ref) => initialNotifSettings),
       onboardingCompletedNotifierProvider.overrideWith(
         (ref) => initialOnboardingCompleted,
